@@ -4,7 +4,7 @@ module.exports = () => {
 		const create = async options => {
 			try {
 				const pollId = await store.create(options);
-				const res = { url: `http://torralpoll.com/poll/?id=${pollId}` };
+				const res = { url: `http://torralpoll.com/poll?id=${pollId}` };
 				return res;
 			} catch (err) {
 				logger.error(err);
