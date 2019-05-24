@@ -14,24 +14,24 @@ module.exports = () => {
 				.catch(next);
 		});
 
-		app.post('/close', (req, res, next) => {
-			const { id } = req.query;
+		app.post('/:id/close', (req, res, next) => {
+			const { id } = req.params;
 			return controller
 				.close(id)
 				.then(response => res.json(response))
 				.catch(next);
 		});
 
-		app.get('/details', (req, res, next) => {
-			const { id } = req.query;
+		app.get('/:id/details', (req, res, next) => {
+			const { id } = req.params;
 			return controller
 				.details(id)
 				.then(response => res.json(response))
 				.catch(next);
 		});
 
-		app.post('/vote', (req, res, next) => {
-			const { id } = req.query;
+		app.post('/:id/vote', (req, res, next) => {
+			const { id } = req.params;
 			const { user, option } = req.body;
 			return controller
 				.vote(id, user, option)
