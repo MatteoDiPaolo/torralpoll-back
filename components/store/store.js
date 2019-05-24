@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 module.exports = () => {
-	const start = async ({ logger, config }) => {
+	const start = async ({ logger }) => {
 		mongoose.connect('mongodb+srv://admin:admin@cluster0-ezkry.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
 		const db = mongoose.connection;
 		let Poll;
@@ -57,7 +57,7 @@ module.exports = () => {
 				return {
 					_id: poll._id,
 					active: poll.active,
-  					options: poll.options.map(op => ({ votes: op.votes, name: op.name })),
+					options: poll.options.map(op => ({ votes: op.votes, name: op.name })),
 				};
 			} catch (err) {
 				logger.error(err);
