@@ -14,7 +14,7 @@ module.exports = () => {
 			next();
 		});
 
-		app.post('/create', (req, res, next) => {
+		app.post('/create', cors(), (req, res, next) => {
 			const { options } = req.body;
 			return controller
 				.create(options)
@@ -22,7 +22,7 @@ module.exports = () => {
 				.catch(next);
 		});
 
-		app.post('/:id/close', (req, res, next) => {
+		app.post('/:id/close', cors(), (req, res, next) => {
 			const { id } = req.params;
 			return controller
 				.close(id)
@@ -30,7 +30,7 @@ module.exports = () => {
 				.catch(next);
 		});
 
-		app.get('/:id/details', (req, res, next) => {
+		app.get('/:id/details', cors(), (req, res, next) => {
 			const { id } = req.params;
 			return controller
 				.details(id)
@@ -38,7 +38,7 @@ module.exports = () => {
 				.catch(next);
 		});
 
-		app.post('/:id/vote', (req, res, next) => {
+		app.post('/:id/vote', cors(), (req, res, next) => {
 			const { id } = req.params;
 			const { user, option } = req.body;
 			return controller
