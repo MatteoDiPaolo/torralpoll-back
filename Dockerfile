@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package*.json ./
-ADD .npmrc ./.npmrc
 
 RUN npm install
 
@@ -13,7 +12,5 @@ RUN npm install
 COPY . .
 
 EXPOSE 4000
-
-RUN npm run manifest
 
 CMD [ "npm", "start" ]
