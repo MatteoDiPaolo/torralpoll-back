@@ -1,10 +1,18 @@
 const { handleError } = require('../../lib/error');
-
+const cors = require('cors');
 const bodyParser = require('body-parser');
 
 module.exports = () => {
 	const start = async ({ app, logger, controller }) => {
 		app.use(bodyParser.json());
+		app.use(cors());
+		app.all('*', (req, res, next) => {
+			const origin = req.get('origin');
+			res.header('Access-Control-Allow-Origin', origin);
+			res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+			res.header('Access-Control-Allow-Headers', 'Content-Type');
+			next();
+		});
 
 		app.post('/create', (req, res, next) => {
 			const { options } = req.body;
