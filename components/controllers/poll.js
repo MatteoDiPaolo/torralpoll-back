@@ -1,9 +1,9 @@
 
 module.exports = () => {
 	const start = async ({ logger, store }) => {
-		const create = async options => {
+		const create = async (name, options) => {
 			try {
-				const pollId = await store.create(options);
+				const pollId = await store.create(name, options);
 				const res = { url: `http://torralpoll.com/poll?id=${pollId}` };
 				return res;
 			} catch (err) {
@@ -46,11 +46,24 @@ module.exports = () => {
 			}
 		};
 
+
+		const listAll = async () => {
+			try {
+				const res = await store.listAll();
+				return res;
+			} catch (err) {
+				logger.error(err);
+				const res = { res: 'Error listing polls' };
+				return res;
+			}
+		};
+
 		return {
 			create,
 			close,
 			details,
 			vote,
+			listAll,
 		};
 	};
 
