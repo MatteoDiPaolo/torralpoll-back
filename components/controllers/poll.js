@@ -4,7 +4,7 @@ module.exports = () => {
 		const create = async (name, options) => {
 			try {
 				const pollId = await store.create(name, options);
-				const res = { url: `http://torralpoll-front-lucas/polls?id=${pollId}` };
+				const res = { url: `https://torralpoll-front-lucas.herokuapp.com/polls?id=${pollId}` };
 				return res;
 			} catch (err) {
 				logger.error(err);
