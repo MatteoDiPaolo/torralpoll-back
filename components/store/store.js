@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 module.exports = () => {
 	const start = async ({ logger }) => {
-		mongoose.connect('mongodb+srv://admin:admin@cluster0-ezkry.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
+		mongoose.connect('mongodb://admin:matteotifoso1@ds143774.mlab.com:43774/torralpoll', { useNewUrlParser: true });
 		const db = mongoose.connection;
 		let Poll;
 
