@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+// const MongoUrl = 'mongodb://localhost:27017/torralpoll';
 
 module.exports = () => {
 	const start = async ({ logger }) => {
 		mongoose.connect('mongodb://admin:matteotifoso1@ds143774.mlab.com:43774/torralpoll', { useNewUrlParser: true });
+		// mongoose.connect(MongoUrl, { useNewUrlParser: true });
 		const db = mongoose.connection;
 		let Poll;
 
@@ -13,14 +15,16 @@ module.exports = () => {
 			Poll = require('../../lib/store/models/poll');
 		});
 
-		const create = async (name, options) => {
+		const create = async (name, description, options) => {
 			const poll = {
 				name,
+				description,
 				active: true,
 				options: options.map(op => ({ name: op, votes: [] })),
 			};
 			try {
 				const res = await new Poll(poll).save();
+
 				return res._id;
 			} catch (err) {
 				logger.error(err);
@@ -55,9 +59,11 @@ module.exports = () => {
 		const details = async pollId => {
 			try {
 				const poll = await Poll.findOne({ _id: pollId });
+
 				return {
 					_id: poll._id,
 					name: poll.name,
+					description: poll.description,
 					active: poll.active,
 					options: poll.options.map(op => ({ votes: op.votes, name: op.name })),
 				};
@@ -92,6 +98,7 @@ module.exports = () => {
 					polls: polls.map(p => ({
 						_id: p._id,
 						name: p.name,
+						description: p.description,
 						active: p.active,
 						options: p.options.map(op => ({ votes: op.votes, name: op.name })),
 					})),
