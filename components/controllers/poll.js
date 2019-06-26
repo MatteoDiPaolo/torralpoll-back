@@ -1,9 +1,9 @@
 
 module.exports = () => {
 	const start = async ({ logger, store }) => {
-		const create = async (name, options) => {
+		const create = async (name, description, options) => {
 			try {
-				const pollId = await store.create(name, options);
+				const pollId = await store.create(name, description, options);
 				const res = { url: `https://torralpoll.lucas1004jx.now.sh/polls?id=${pollId}` };
 				return res;
 			} catch (err) {

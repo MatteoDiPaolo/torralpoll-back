@@ -15,9 +15,9 @@ module.exports = () => {
 		});
 
 		app.post('/create', cors(), (req, res, next) => {
-			const { name, options } = req.body;
+			const { name, description, options } = req.body;
 			return controller
-				.create(name, options)
+				.create(name, description, options)
 				.then(response => res.json(response))
 				.catch(next);
 		});
@@ -39,13 +39,10 @@ module.exports = () => {
 		});
 
 
-		app.get('/list', cors(), (req, res, next) => {
-			console.log('req', req);
-			return controller
-				.listAll()
-				.then(response => res.json(response))
-				.catch(next);
-		});
+		app.get('/list', cors(), (req, res, next) => controller
+			.listAll()
+			.then(response => res.json(response))
+			.catch(next));
 
 		app.post('/:id/vote', cors(), (req, res, next) => {
 			const { id } = req.params;
