@@ -53,6 +53,14 @@ module.exports = () => {
 				.catch(next);
 		});
 
+		app.post('/:id/delete', cors(), (req, res, next) => {
+			const { id } = req.params;
+			return controller
+				.deleteById(id)
+				.then(response => res.json(response))
+				.catch(next);
+		});
+
 		app.use(handleError(logger));
 	};
 

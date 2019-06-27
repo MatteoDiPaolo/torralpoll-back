@@ -58,12 +58,24 @@ module.exports = () => {
 			}
 		};
 
+		const deleteById = async id => {
+			try {
+				const res = await store.deleteById(id);
+				return res;
+			} catch (err) {
+				logger.error(err);
+				const res = { res: 'Error delete by id' };
+				return res;
+			}
+		};
+
 		return {
 			create,
 			close,
 			details,
 			vote,
 			listAll,
+			deleteById,
 		};
 	};
 
