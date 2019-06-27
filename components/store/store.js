@@ -110,12 +110,23 @@ module.exports = () => {
 		};
 
 
+		const deleteById = async pollId => {
+			try {
+				const poll = await Poll.findByIdAndRemove({ _id: pollId });
+				return poll._id;
+			} catch (err) {
+				logger.error(err);
+				throw err;
+			}
+		};
+
 		return {
 			create,
 			updateVotes,
 			details,
 			close,
 			listAll,
+			deleteById,
 		};
 	};
 
