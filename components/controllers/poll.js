@@ -1,3 +1,8 @@
+const { errorFactory } = require('../../lib/errors');
+
+const notFoundError = errorFactory('not_found');
+const unauthorizedError = errorFactory('unauthorized');
+const wrongInputError = errorFactory('wrong_input');
 
 module.exports = () => {
 	const start = async ({ logger, store }) => {
@@ -25,14 +30,9 @@ module.exports = () => {
 		};
 
 		const details = async id => {
-			try {
-				const res = await store.details(id);
-				return res;
-			} catch (err) {
-				logger.error(err);
-				const res = { res: `Error getting details for poll: ${id}` };
-				return res;
-			}
+			const poll = await store.details(id);
+			if (!poll) throw notFoundError(`Poll with id: ${id} not found`);
+			return poll;
 		};
 
 		const vote = async (id, user, option) => {

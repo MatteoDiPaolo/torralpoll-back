@@ -1,6 +1,12 @@
-const { handleError } = require('../../lib/error');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } = require('http-status-codes');
+const { handleError, httpErrorFactory } = require('../../lib/errors');
+
+const buildBadRequestError = httpErrorFactory(BAD_REQUEST);
+const buildNotFoundError = httpErrorFactory(NOT_FOUND);
+const buildUnauthorisedError = httpErrorFactory(UNAUTHORIZED);
+const buildServerError = httpErrorFactory();
 
 module.exports = () => {
 	const start = async ({ app, logger, controller }) => {
@@ -13,6 +19,17 @@ module.exports = () => {
 			res.header('Access-Control-Allow-Headers', 'Content-Type');
 			next();
 		});
+
+
+		const tagError = err => {
+			const errors = {
+				not_found: buildNotFoundError(err.message, err.extra),
+				server_error: buildServerError(err.message, err.extra),
+				unauthorized: buildUnauthorisedError(err.message, err.extra),
+				wrong_input: buildBadRequestError(err.message, err.extra),
+			};
+			return errors[err.type || 'server_error'];
+		};
 
 		app.post('/create', cors(), (req, res, next) => {
 			const { name, description, options } = req.body;
@@ -30,12 +47,14 @@ module.exports = () => {
 				.catch(next);
 		});
 
-		app.get('/:id/details', cors(), (req, res, next) => {
+		app.get('/:id/details', cors(), async (req, res, next) => {
 			const { id } = req.params;
-			return controller
-				.details(id)
-				.then(response => res.json(response))
-				.catch(next);
+			try {
+				const pollDetails = await controller.details(id);
+				return res.json(pollDetails);
+			} catch (err) {
+				return next(tagError(err));
+			}
 		});
 
 

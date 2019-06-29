@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
-// const MongoUrl = 'mongodb://localhost:27017/torralpoll';
+const Poll = require('../../lib/store/models/poll');
 
 module.exports = () => {
 	const start = async ({ logger, config }) => {
-		mongoose.connect(config.mongodbConnectionString, { useNewUrlParser: true });
-		const db = mongoose.connection;
-		let Poll;
+		const mongooseConnect = async () => {
+			try {
+				await mongoose.connect(config.mongodbConnectionString, { useNewUrlParser: true });
+			} catch (error) {
+				logger.error(error.message);
+				throw error;
+			}
+		};
+		await mongooseConnect();
 
-		db.on('error', console.error.bind(console, 'connection error:'));
-		db.once('open', async () => {
-			logger.info('Correctly connected to mongoose');
-			// eslint-disable-next-line global-require
-			Poll = require('../../lib/store/models/poll');
-		});
 
 		const create = async (name, description, options) => {
 			const poll = {
@@ -54,21 +54,22 @@ module.exports = () => {
 			}
 		};
 
+		const formatPoll = pollFromDB => (
+			{
+				_id: pollFromDB._id,
+				name: pollFromDB.name,
+				description: pollFromDB.description,
+				active: pollFromDB.active,
+				options: pollFromDB.options.map(op => ({ votes: op.votes, name: op.name })),
+			});
 
 		const details = async pollId => {
 			try {
-				const poll = await Poll.findOne({ _id: pollId });
-
-				return {
-					_id: poll._id,
-					name: poll.name,
-					description: poll.description,
-					active: poll.active,
-					options: poll.options.map(op => ({ votes: op.votes, name: op.name })),
-				};
-			} catch (err) {
-				logger.error(err);
-				throw err;
+				const pollFromDB = await Poll.findOne({ _id: pollId });
+				const pollFormatted = await formatPoll(pollFromDB);
+				return pollFormatted;
+			} catch (error) {
+				return undefined;
 			}
 		};
 
