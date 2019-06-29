@@ -1,8 +1,8 @@
 const { errorFactory } = require('../../lib/errors');
 
 const notFoundError = errorFactory('not_found');
-const unauthorizedError = errorFactory('unauthorized');
-const wrongInputError = errorFactory('wrong_input');
+// const unauthorizedError = errorFactory('unauthorized');
+// const wrongInputError = errorFactory('wrong_input');
 
 module.exports = () => {
 	const start = async ({ logger, store }) => {
