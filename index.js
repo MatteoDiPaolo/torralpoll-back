@@ -1,5 +1,7 @@
 process.env.SERVICE_ENV = process.env.SERVICE_ENV || 'local';
 
+require('dotenv').config();
+
 const system = require('./system');
 const runner = require('systemic-domain-runner');
 const bunyan = require('bunyan');

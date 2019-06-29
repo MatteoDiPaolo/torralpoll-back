@@ -3,6 +3,9 @@ module.exports = {
 		host: '0.0.0.0',
 		port: process.env.PORT || 4000,
 	},
+	store: {
+		mongodbConnectionString: process.env.MONGODB_CONNECTION_STRING,
+	},
 	logger: {
 		transport: 'console',
 		include: [

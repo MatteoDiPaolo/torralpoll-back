@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 // const MongoUrl = 'mongodb://localhost:27017/torralpoll';
 
 module.exports = () => {
-	const start = async ({ logger }) => {
-		mongoose.connect('mongodb://admin:matteotifoso1@ds143774.mlab.com:43774/torralpoll', { useNewUrlParser: true });
-		// mongoose.connect(MongoUrl, { useNewUrlParser: true });
+	const start = async ({ logger, config }) => {
+		mongoose.connect(config.mongodbConnectionString, { useNewUrlParser: true });
 		const db = mongoose.connection;
 		let Poll;
 
