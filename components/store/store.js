@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const Poll = require('./models/poll');
-const { formatPollDetails } = require('./formatters/poll');
+const { formatPollDetails, formatPollsList } = require('./formatters/poll');
 
 module.exports = () => {
 	const start = async ({ logger, config }) => {
+		// DB connection method
 		const mongooseConnect = async () => {
 			try {
 				await mongoose.connect(config.mongodbConnectionString, { useNewUrlParser: true });
@@ -86,19 +87,12 @@ module.exports = () => {
 
 		const listAll = async () => {
 			try {
-				const polls = await Poll.find({ });
-				return {
-					polls: polls.map(p => ({
-						_id: p._id,
-						name: p.name,
-						description: p.description,
-						active: p.active,
-						options: p.options.map(op => ({ votes: op.votes, name: op.name })),
-					})),
-				};
+				const pollsListFromDB = await Poll.find({ });
+				const pollsListFormatted = formatPollsList(pollsListFromDB);
+				return pollsListFormatted;
 			} catch (err) {
 				logger.error(err);
-				throw err;
+				return undefined;
 			}
 		};
 

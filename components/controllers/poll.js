@@ -3,6 +3,7 @@ const { errorFactory } = require('../../lib/errors');
 const notFoundError = errorFactory('not_found');
 // const unauthorizedError = errorFactory('unauthorized');
 // const wrongInputError = errorFactory('wrong_input');
+const serverError = errorFactory();
 
 module.exports = () => {
 	const start = async ({ logger, store }) => {
@@ -48,14 +49,9 @@ module.exports = () => {
 
 
 		const listAll = async () => {
-			try {
-				const res = await store.listAll();
-				return res;
-			} catch (err) {
-				logger.error(err);
-				const res = { res: 'Error listing polls' };
-				return res;
-			}
+			const polls = await store.listAll();
+			if (!polls) throw serverError('Error listing polls');
+			return polls;
 		};
 
 		const deleteById = async id => {
