@@ -22,8 +22,18 @@ const formatPollsList = pollsListFromDB => (
 	}
 );
 
+const formatNewPoll = (name, description, options) => (
+	{
+		name,
+		description,
+		active: true,
+		options: options.map(option => ({ name: option, votes: [] })),
+	}
+);
+
 
 module.exports = {
-	formatPollDetails,
 	formatPollsList,
+	formatNewPoll,
+	formatPollDetails,
 };

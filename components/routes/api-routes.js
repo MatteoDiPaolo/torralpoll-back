@@ -20,7 +20,6 @@ module.exports = () => {
 			next();
 		});
 
-
 		const tagError = err => {
 			const errors = {
 				not_found: buildNotFoundError(err.message, err.extra),
@@ -31,25 +30,31 @@ module.exports = () => {
 			return errors[err.type || 'server_error'];
 		};
 
-		app.post('/create', cors(), (req, res, next) => {
-			const { name, description, options } = req.body;
-			return controller
-				.create(name, description, options)
-				.then(response => res.json(response))
-				.catch(next);
+
+		app.get('/list', cors(), async (req, res, next) => {
+			try {
+				const pollsList = await controller.listAll();
+				return res.json(pollsList);
+			} catch (err) {
+				return next(tagError(err));
+			}
 		});
 
-		app.post('/:id/close', cors(), (req, res, next) => {
-			const { id } = req.params;
-			return controller
-				.close(id)
-				.then(response => res.json(response))
-				.catch(next);
+
+		app.post('/create', cors(), async (req, res, next) => {
+			try {
+				const { name, description, options } = req.body;
+				const newPoll = await controller.create(name, description, options);
+				return res.json(newPoll);
+			} catch (err) {
+				return next(tagError(err));
+			}
 		});
+
 
 		app.get('/:id/details', cors(), async (req, res, next) => {
-			const { id } = req.params;
 			try {
+				const { id } = req.params;
 				const pollDetails = await controller.details(id);
 				return res.json(pollDetails);
 			} catch (err) {
@@ -58,27 +63,39 @@ module.exports = () => {
 		});
 
 
-		app.get('/list', cors(), (req, res, next) => controller
-			.listAll()
-			.then(response => res.json(response))
-			.catch(next));
-
-		app.post('/:id/vote', cors(), (req, res, next) => {
-			const { id } = req.params;
-			const { user, option } = req.body;
-			return controller
-				.vote(id, user, option)
-				.then(response => res.json(response))
-				.catch(next);
+		app.post('/:id/vote', cors(), async (req, res, next) => {
+			try {
+				const { id } = req.params;
+				const { user, option } = req.body;
+				const pollUpdated = await controller.vote(id, user, option);
+				return res.json(pollUpdated);
+			} catch (err) {
+				return next(tagError(err));
+			}
 		});
 
-		app.post('/:id/delete', cors(), (req, res, next) => {
-			const { id } = req.params;
-			return controller
-				.deleteById(id)
-				.then(response => res.json(response))
-				.catch(next);
+
+		app.post('/:id/close', cors(), async (req, res, next) => {
+			try {
+				const { id } = req.params;
+				const pollClosed = await controller.close(id);
+				return res.json(pollClosed);
+			} catch (err) {
+				return next(tagError(err));
+			}
 		});
+
+
+		app.post('/:id/delete', cors(), async (req, res, next) => {
+			try {
+				const { id } = req.params;
+				const pollDeleted = await controller.deleteById(id);
+				return res.json(pollDeleted);
+			} catch (err) {
+				return next(tagError(err));
+			}
+		});
+
 
 		app.use(handleError(logger));
 	};
