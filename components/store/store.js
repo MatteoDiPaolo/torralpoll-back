@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Poll = require('../../lib/store/models/poll');
+const Poll = require('./models/poll');
 
 module.exports = () => {
 	const start = async ({ logger, config }) => {
