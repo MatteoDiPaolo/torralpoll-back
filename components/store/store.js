@@ -58,7 +58,7 @@ module.exports = () => {
 		const details = async pollId => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
-				const pollFormatted = await formatPollDetails(pollFromDB);
+				const pollFormatted = formatPollDetails(pollFromDB);
 				return pollFormatted;
 			} catch (err) {
 				logger.error(err);
