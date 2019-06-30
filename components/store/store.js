@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Poll = require('./models/poll');
+const { formatPollDetails } = require('./formatters/poll');
 
 module.exports = () => {
 	const start = async ({ logger, config }) => {
@@ -54,19 +55,10 @@ module.exports = () => {
 			}
 		};
 
-		const formatPoll = pollFromDB => (
-			{
-				_id: pollFromDB._id,
-				name: pollFromDB.name,
-				description: pollFromDB.description,
-				active: pollFromDB.active,
-				options: pollFromDB.options.map(op => ({ votes: op.votes, name: op.name })),
-			});
-
 		const details = async pollId => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
-				const pollFormatted = await formatPoll(pollFromDB);
+				const pollFormatted = await formatPollDetails(pollFromDB);
 				return pollFormatted;
 			} catch (error) {
 				return undefined;
