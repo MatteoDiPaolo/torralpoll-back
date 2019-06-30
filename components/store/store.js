@@ -60,7 +60,8 @@ module.exports = () => {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
 				const pollFormatted = await formatPollDetails(pollFromDB);
 				return pollFormatted;
-			} catch (error) {
+			} catch (err) {
+				logger.error(err);
 				return undefined;
 			}
 		};
