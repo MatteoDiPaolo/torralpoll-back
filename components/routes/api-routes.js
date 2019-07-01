@@ -30,7 +30,13 @@ module.exports = () => {
 			return errors[err.type || 'server_error'];
 		};
 
-
+		/**
+		 * This endpoint will give you a list of each poll stored into the DB
+		 * @route GET /list
+		 * @group Polls - Everything about polls
+		 * @returns {PollsList.model} 200 - Success response
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 */
 		app.get('/list', cors(), async (req, res, next) => {
 			try {
 				const pollsList = await controller.listAll();
@@ -40,7 +46,14 @@ module.exports = () => {
 			}
 		});
 
-
+		/**
+		 * This endpoint will create a new poll
+		 * @route POST /create
+		 * @group Polls - Everything about polls
+		 * @param {NewPoll.model} newPoll.body.required - new poll info
+		 * @returns {Poll.model} 200 - Success response
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 */
 		app.post('/create', cors(), async (req, res, next) => {
 			try {
 				const { name, description, options } = req.body;
@@ -51,7 +64,15 @@ module.exports = () => {
 			}
 		});
 
-
+		/**
+		 * This endpoint will give you all the info related to a poll
+		 * @route GET /{id}/details
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @returns {Poll.model} 200 - Success response
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error404.model} 404 - Not found
+		 */
 		app.get('/:id/details', cors(), async (req, res, next) => {
 			try {
 				const { id } = req.params;
@@ -62,7 +83,16 @@ module.exports = () => {
 			}
 		});
 
-
+		/**
+		 * This endpoint will let you vote for a given poll
+		 * @route POST /{id}/vote
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @param {UserVote.model} userVote.body.required - user vote
+		 * @returns {Poll.model} 200 - Success response
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error404.model} 404 - Not found
+		 */
 		app.post('/:id/vote', cors(), async (req, res, next) => {
 			try {
 				const { id } = req.params;
@@ -74,7 +104,15 @@ module.exports = () => {
 			}
 		});
 
-
+		/**
+		 * This endpoint will let you close a given poll
+		 * @route POST /{id}/close
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @returns {Poll.model} 200 - Success response
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error404.model} 404 - Not found
+		 */
 		app.post('/:id/close', cors(), async (req, res, next) => {
 			try {
 				const { id } = req.params;
@@ -85,8 +123,16 @@ module.exports = () => {
 			}
 		});
 
-
-		app.post('/:id/delete', cors(), async (req, res, next) => {
+		/**
+		 * This endpoint will let you delete a given poll
+		 * @route DELETE /{id}/delete
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @returns {Poll.model} 200 - Success response
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error404.model} 404 - Not found
+		 */
+		app.delete('/:id/delete', cors(), async (req, res, next) => {
 			try {
 				const { id } = req.params;
 				const pollDeleted = await controller.deleteById(id);

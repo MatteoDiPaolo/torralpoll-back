@@ -6,6 +6,32 @@ module.exports = {
 	store: {
 		mongodbConnectionString: process.env.MONGODB_CONNECTION_STRING,
 	},
+	routes: {
+		admin: {
+			swaggerOptions: {
+				swaggerDefinition: {
+					info: {
+						description: 'Documentation for TorralPoll Back API',
+						title: 'TorralPoll Back API',
+						version: '1.0.0',
+						contact: { email: 'matteo.dipaolantonio@guidesmiths.com' },
+					},
+					host: process.env.SERVICE_ENV !== 'local' ? process.env.SERVICE_ENV : `localhost:${process.env.PORT || 4000}`,
+					basePath: '/',
+					produces: ['application/json'],
+					schemes: ['http'],
+					securityDefinitions: {
+						JWT: {
+							type: 'apiKey',
+							in: 'header',
+							name: 'Authorization',
+							description: '',
+						},
+					},
+				},
+			},
+		},
+	},
 	logger: {
 		transport: 'console',
 		include: [
