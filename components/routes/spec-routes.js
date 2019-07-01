@@ -21,6 +21,7 @@
 /**
  * @typedef NewPoll
  * @property {string} name
+ * @property {string} description
  * @property {Array.<string>} options
  */
 
