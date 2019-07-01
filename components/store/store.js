@@ -45,6 +45,7 @@ module.exports = () => {
 		const details = async pollId => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
+				if (!pollFromDB) throw new Error('poll_not_found');
 				const pollFormatted = formatPollDetails(pollFromDB);
 				return pollFormatted;
 			} catch (err) {
@@ -57,6 +58,7 @@ module.exports = () => {
 		const updateVotes = async (pollId, user, option) => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
+				if (!pollFromDB) throw new Error('poll_not_found');
 				if (!pollFromDB.active) throw new Error('poll_not_active');
 				if (userHasAlreadayVoted(user, pollFromDB)) throw new Error('user_has_already_voted');
 				await Poll.findOneAndUpdate(
@@ -76,6 +78,7 @@ module.exports = () => {
 		const close = async pollId => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
+				if (!pollFromDB) throw new Error('poll_not_found');
 				if (!pollFromDB.active) throw new Error('poll_already_closed');
 				await Poll.findOneAndUpdate(
 					{ _id: pollId },
@@ -94,6 +97,7 @@ module.exports = () => {
 		const deleteById = async pollId => {
 			try {
 				const pollFromDB = await Poll.findByIdAndRemove({ _id: pollId });
+				if (!pollFromDB) throw new Error('poll_not_found');
 				const pollFormatted = formatPollDetails(pollFromDB);
 				return pollFormatted;
 			} catch (err) {
