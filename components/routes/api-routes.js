@@ -1,7 +1,11 @@
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const request = require('request-promise-native');
+
 const { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } = require('http-status-codes');
-const { handleError, httpErrorFactory } = require('../../lib/errors');
+const { handleError, httpErrorFactory, errorFactory } = require('../../lib/errors');
+
+const unauthorizedError = errorFactory('unauthorized');
 
 const buildBadRequestError = httpErrorFactory(BAD_REQUEST);
 const buildNotFoundError = httpErrorFactory(NOT_FOUND);
@@ -9,7 +13,7 @@ const buildUnauthorisedError = httpErrorFactory(UNAUTHORIZED);
 const buildServerError = httpErrorFactory();
 
 module.exports = () => {
-	const start = async ({ app, logger, controller }) => {
+	const start = async ({ app, logger, controller, config }) => {
 		app.use(bodyParser.json());
 		app.use(cors());
 		app.all('*', (req, res, next) => {
@@ -30,15 +34,31 @@ module.exports = () => {
 			return errors[err.type || 'server_error'];
 		};
 
+
+		const requests = {
+			get: uri => ({
+				uri,
+				method: 'GET',
+				json: true,
+			}),
+		};
+		const isTokenValidForGoogle = tok =>
+			request(requests.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${tok}`))
+				.then(data => data)
+				.catch(err => err);
+
 		/**
 		 * This endpoint will give you a list of each poll stored into the DB
 		 * @route GET /list
 		 * @group Polls - Everything about polls
 		 * @returns {PollsList.model} 200 - Success response
 		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
 		 */
 		app.get('/list', cors(), async (req, res, next) => {
 			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				const pollsList = await controller.listAll();
 				return res.json(pollsList);
 			} catch (err) {
@@ -53,9 +73,13 @@ module.exports = () => {
 		 * @param {NewPoll.model} newPoll.body.required - new poll info
 		 * @returns {Poll.model} 200 - Success response
 		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
 		 */
 		app.post('/create', cors(), async (req, res, next) => {
 			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com '].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
 				const { name, description, options } = req.body;
 				const newPoll = await controller.create(name, description, options);
 				return res.json(newPoll);
@@ -72,9 +96,12 @@ module.exports = () => {
 		 * @returns {Poll.model} 200 - Success response
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @returns {Error404.model} 404 - Not found
+		 * @security JWT
 		 */
 		app.get('/:id/details', cors(), async (req, res, next) => {
 			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				const { id } = req.params;
 				const pollDetails = await controller.details(id);
 				return res.json(pollDetails);
@@ -92,9 +119,12 @@ module.exports = () => {
 		 * @returns {Poll.model} 200 - Success response
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @returns {Error404.model} 404 - Not found
+		 * @security JWT
 		 */
 		app.post('/:id/vote', cors(), async (req, res, next) => {
 			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				const { id } = req.params;
 				const { user, option } = req.body;
 				const pollUpdated = await controller.vote(id, user, option);
@@ -112,9 +142,13 @@ module.exports = () => {
 		 * @returns {Poll.model} 200 - Success response
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @returns {Error404.model} 404 - Not found
+		 * @security JWT
 		 */
 		app.post('/:id/close', cors(), async (req, res, next) => {
 			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com '].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
 				const { id } = req.params;
 				const pollClosed = await controller.close(id);
 				return res.json(pollClosed);
@@ -131,9 +165,13 @@ module.exports = () => {
 		 * @returns {Poll.model} 200 - Success response
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @returns {Error404.model} 404 - Not found
+		 * @security JWT
 		 */
 		app.delete('/:id/delete', cors(), async (req, res, next) => {
 			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com '].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
 				const { id } = req.params;
 				const pollDeleted = await controller.deleteById(id);
 				return res.json(pollDeleted);

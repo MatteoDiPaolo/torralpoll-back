@@ -7,6 +7,9 @@ module.exports = {
 		mongodbConnectionString: process.env.MONGODB_CONNECTION_STRING,
 	},
 	routes: {
+		api: {
+			googleClientId: process.env.GOOGLE_CLIENT_ID,
+		},
 		admin: {
 			swaggerOptions: {
 				swaggerDefinition: {
