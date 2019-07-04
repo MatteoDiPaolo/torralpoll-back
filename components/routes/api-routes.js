@@ -48,10 +48,44 @@ module.exports = () => {
 				.catch(err => err);
 
 		/**
+		 * This endpoint will give you the info of the user retrieved from google using the token
+		 * @route POST /user
+		 * @group Users - Everything about users
+		 * @param {Token.model} token.body.required - google token
+		 * @returns {UserAuthentication.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 */
+		app.post('/user', cors(), async (req, res, next) => {
+			try {
+				const { token } = req.body;
+				const resFromGoogle = await isTokenValidForGoogle(token);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The provided token is not valid');
+				return res.json({
+					iss: resFromGoogle.iss,
+					hd: resFromGoogle.hd,
+					email: resFromGoogle.email,
+					email_verified: resFromGoogle.email_verified,
+					name: resFromGoogle.name,
+					picture: resFromGoogle.picture,
+					given_name: resFromGoogle.given_name,
+					family_name: resFromGoogle.family_name,
+					locale: resFromGoogle.locale,
+					iat: resFromGoogle.iat,
+					exp: resFromGoogle.exp,
+					typ: resFromGoogle.typ,
+				});
+			} catch (err) {
+				return next(tagError(err));
+			}
+		});
+
+		/**
 		 * This endpoint will give you a list of each poll stored into the DB
 		 * @route GET /list
 		 * @group Polls - Everything about polls
 		 * @returns {PollsList.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
@@ -72,6 +106,7 @@ module.exports = () => {
 		 * @group Polls - Everything about polls
 		 * @param {NewPoll.model} newPoll.body.required - new poll info
 		 * @returns {Poll.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
@@ -94,14 +129,15 @@ module.exports = () => {
 		 * @group Polls - Everything about polls
 		 * @param {string} id.path.required - poll id
 		 * @returns {Poll.model} 200 - Success response
-		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
 		app.get('/:id/details', cors(), async (req, res, next) => {
 			try {
-				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				// const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				// if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				const { id } = req.params;
 				const pollDetails = await controller.details(id);
 				return res.json(pollDetails);
@@ -117,8 +153,9 @@ module.exports = () => {
 		 * @param {string} id.path.required - poll id
 		 * @param {UserVote.model} userVote.body.required - user vote
 		 * @returns {Poll.model} 200 - Success response
-		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
 		app.post('/:id/vote', cors(), async (req, res, next) => {
@@ -140,8 +177,9 @@ module.exports = () => {
 		 * @group Polls - Everything about polls
 		 * @param {string} id.path.required - poll id
 		 * @returns {Poll.model} 200 - Success response
-		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
 		app.post('/:id/close', cors(), async (req, res, next) => {
@@ -163,8 +201,9 @@ module.exports = () => {
 		 * @group Polls - Everything about polls
 		 * @param {string} id.path.required - poll id
 		 * @returns {Poll.model} 200 - Success response
-		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
 		app.delete('/:id/delete', cors(), async (req, res, next) => {
