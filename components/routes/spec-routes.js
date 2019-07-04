@@ -48,8 +48,9 @@
  * @property {string} family_name
  * @property {string} locale
  * @property {string} iat
- * @property {string} exp
- * @property {string} typ
+ * @property {string} exp - expiration time
+ * @property {string} typ - type JWT
+ * @property {string} role - admin, user
  */
 
 /**

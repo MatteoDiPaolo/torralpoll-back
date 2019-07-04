@@ -74,6 +74,7 @@ module.exports = () => {
 					iat: resFromGoogle.iat,
 					exp: resFromGoogle.exp,
 					typ: resFromGoogle.typ,
+					rol: ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com '].includes(resFromGoogle.email) ? 'Admin' : 'User',
 				});
 			} catch (err) {
 				return next(tagError(err));
@@ -136,8 +137,8 @@ module.exports = () => {
 		 */
 		app.get('/:id/details', cors(), async (req, res, next) => {
 			try {
-				// const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				// if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				const { id } = req.params;
 				const pollDetails = await controller.details(id);
 				return res.json(pollDetails);
