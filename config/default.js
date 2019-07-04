@@ -22,7 +22,7 @@ module.exports = {
 					host: process.env.HOST || `localhost:${process.env.PORT || 4000}`,
 					basePath: '/',
 					produces: ['application/json'],
-					schemes: ['http', 'https'],
+					schemes: ['https', 'http'],
 					securityDefinitions: {
 						JWT: {
 							type: 'apiKey',
