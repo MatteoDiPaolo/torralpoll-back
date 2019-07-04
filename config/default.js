@@ -19,10 +19,10 @@ module.exports = {
 						version: '1.0.0',
 						contact: { email: 'matteo.dipaolantonio@guidesmiths.com' },
 					},
-					host: process.env.SERVICE_ENV !== 'local' ? 'https://torralbot-back.herokuapp.com' : `localhost:${process.env.PORT || 4000}`,
+					host: process.env.SERVICE_ENV !== 'local' ? process.env.HOST : `localhost:${process.env.PORT || 4000}`,
 					basePath: '/',
 					produces: ['application/json'],
-					schemes: ['http'],
+					schemes: ['http', 'https'],
 					securityDefinitions: {
 						JWT: {
 							type: 'apiKey',
