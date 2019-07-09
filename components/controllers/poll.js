@@ -27,17 +27,35 @@ module.exports = () => {
 		};
 
 
-		const details = async id => {
+		const details = async (id, user) => {
 			try {
-				const poll = await store.details(id);
+				const poll = await store.details(id, user);
 				return poll;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
+				if (err.message === 'user_has_already_voted') throw serverError(`User: ${user} has already voted for poll: ${id}`);
 				throw serverError(`Error getting details of poll: ${id}`);
 			}
 		};
 
-
+		const userOption = async (id, user) => {
+			try {
+				const poll = await store.userOption(id, user);
+				return poll;
+			} catch (err) {
+				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
+				throw serverError(`Error getting user option of poll: ${id}`);
+			}
+		};
+		const pollResult = async id => {
+			try {
+				const result = await store.pollResult(id);
+				return result;
+			} catch (err) {
+				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
+				throw serverError(`Error getting poll:${id} result`);
+			}
+		};
 		const vote = async (id, user, option) => {
 			try {
 				const poll = await store.updateVotes(id, user, option);
@@ -81,6 +99,8 @@ module.exports = () => {
 			vote,
 			close,
 			deleteById,
+			userOption,
+			pollResult,
 		};
 	};
 
