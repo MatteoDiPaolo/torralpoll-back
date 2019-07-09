@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "local": "SERVICE_ENV=local node index.js",
+    "local": "SERVICE_ENV=local nodemon index.js",
     "start": "node index.js",
     "test-ci": "SERVICE_ENV=test mocha --reporter mocha-junit-reporter",
     "test": "SERVICE_ENV=test mocha --reporter spec './test/**/*.test.js'",
@@ -23,6 +23,7 @@
     "make-manifest": "^1.0.1",
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.18.0",
+    "nodemon": "^1.19.1",
     "supertest": "^3.0.0"
   },
   "dependencies": {
