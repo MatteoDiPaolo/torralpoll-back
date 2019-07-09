@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Poll = require('./models/poll');
-const { formatNewPoll, formatPollDetails, formatPollsList } = require('./formatters/poll');
+const { formatNewPoll, formatPollDetails, formatPollsList, formatPollOption, formatPollResult } = require('./formatters/poll');
 const { userHasAlreadayVoted } = require('./utils/helpers');
 
 module.exports = () => {
@@ -42,10 +42,11 @@ module.exports = () => {
 		};
 
 
-		const details = async pollId => {
+		const details = async (pollId, user) => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
 				if (!pollFromDB) throw new Error('poll_not_found');
+				if (userHasAlreadayVoted(user, pollFromDB)) throw new Error('user_has_already_voted');
 				const pollFormatted = formatPollDetails(pollFromDB);
 				return pollFormatted;
 			} catch (err) {
@@ -54,10 +55,32 @@ module.exports = () => {
 			}
 		};
 
-
+		const userOption = async (pollId, user) =>{
+			try {
+				const pollFromDB = await Poll.findOne({ _id: pollId });
+				if (!pollFromDB) throw new Error('poll_not_found');
+				const pollFormatted = formatPollOption(pollFromDB, user);
+				return pollFormatted;
+			} catch (err) {
+				logger.error(err);
+				throw err;
+			}
+		}
+		const pollResult = async (pollId) => {
+			try {
+				const pollFromDB = await Poll.findOne({ _id: pollId });
+				if (!pollFromDB) throw new Error('poll_not_found');
+				const pollFormatted = formatPollResult(pollFromDB);
+				return pollFormatted;
+			} catch (err) {
+				logger.error(err);
+				throw err;
+			}
+		}
 		const updateVotes = async (pollId, user, option) => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
+				console.log('pollFromDB',pollFromDB);
 				if (!pollFromDB) throw new Error('poll_not_found');
 				if (!pollFromDB.active) throw new Error('poll_not_active');
 				if (userHasAlreadayVoted(user, pollFromDB)) throw new Error('user_has_already_voted');
@@ -114,6 +137,8 @@ module.exports = () => {
 			updateVotes,
 			close,
 			deleteById,
+			userOption,
+			pollResult
 		};
 	};
 
