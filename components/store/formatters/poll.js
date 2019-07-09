@@ -6,10 +6,27 @@ const formatPollDetails = pollFromDB => (
 		name: pollFromDB.name,
 		description: pollFromDB.description,
 		active: pollFromDB.active,
-		options: pollFromDB.options.map(op => ({ votes: op.votes, name: op.name })),
+		options: pollFromDB.options.map(opt => ({ name: opt.name })),
 	}
 );
 
+const formatPollOption = (pollFromDB, user) => (
+	{
+		_id: pollFromDB._id,
+		name: pollFromDB.name,
+		description: pollFromDB.description,
+		options: pollFromDB.options.map(opt => ({ name: opt.name })),
+		userOption: pollFromDB.options.filter(option => option.votes.includes(user))[0].name,
+	}
+);
+const formatPollResult = pollFromDB => (
+	{
+		_id: pollFromDB._id,
+		name: pollFromDB.name,
+		description: pollFromDB.description,
+		options: pollFromDB.options.map(opt => ({ name: opt.name, votes: opt.votes.length })),
+	}
+);
 const formatPollsList = pollsListFromDB => (
 	{
 		polls: pollsListFromDB.map(pollFromDB => ({
@@ -36,4 +53,6 @@ module.exports = {
 	formatPollsList,
 	formatNewPoll,
 	formatPollDetails,
+	formatPollOption,
+	formatPollResult,
 };
