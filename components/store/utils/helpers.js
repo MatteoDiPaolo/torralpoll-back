@@ -1,17 +1,8 @@
 /* eslint-disable no-plusplus */
 
 
-const userHasAlreadayVoted = (user, poll) => {
-	let alreadyVoted = false;
-	for (let i = 0; i < poll.options.length; i++) {
-		for (let j = 0; j < poll.options[i].votes.length; j++) {
-			if (user === poll.options[i].votes[j]) {
-				alreadyVoted = true;
-			}
-		}
-	}
-	return alreadyVoted;
-};
+const userHasAlreadayVoted = (user, poll) => poll.options.reduce((_, opt) => _ || opt.votes.includes(user), false);
+
 
 module.exports = {
 	userHasAlreadayVoted,
