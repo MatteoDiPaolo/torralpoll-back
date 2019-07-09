@@ -140,13 +140,36 @@ module.exports = () => {
 				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
 				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				const { id } = req.params;
-				const pollDetails = await controller.details(id);
+				const user = resFromGoogle.email;
+				const pollDetails = await controller.details(id, user);
 				return res.json(pollDetails);
 			} catch (err) {
 				return next(tagError(err));
 			}
 		});
-
+		app.get('/:id/userOption', cors(), async (req, res, next) => {
+			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				const { id } = req.params;
+				const user = resFromGoogle.email;
+				const userOption = await controller.userOption(id, user);
+				return res.json(userOption);
+			} catch (err) {
+				return next(tagError(err));
+			}
+		});
+		app.get('/:id/result', cors(), async (req, res, next) => {
+			try {
+				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
+				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				const { id } = req.params;
+				const pollResult = await controller.pollResult(id);
+				return res.json(pollResult);
+			} catch (err) {
+				return next(tagError(err));
+			}
+		});
 		/**
 		 * This endpoint will let you vote for a given poll
 		 * @route POST /{id}/vote
