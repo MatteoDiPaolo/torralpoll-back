@@ -17,10 +17,10 @@ module.exports = () => {
 		await mongooseConnect();
 
 
-		const listAll = async () => {
+		const listAll = async user => {
 			try {
 				const pollsListFromDB = await Poll.find({ });
-				const pollsListFormatted = formatPollsList(pollsListFromDB);
+				const pollsListFormatted = formatPollsList(pollsListFromDB, user);
 				return pollsListFormatted;
 			} catch (err) {
 				logger.error(err);
@@ -29,11 +29,11 @@ module.exports = () => {
 		};
 
 
-		const create = async (name, description, options) => {
+		const create = async (name, description, options, userRole, user) => {
 			try {
 				const newPoll = formatNewPoll(name, description, options);
 				const newPollFromDB = await new Poll(newPoll).save();
-				const pollFormatted = formatPollDetails(newPollFromDB);
+				const pollFormatted = formatPollDetails(newPollFromDB, userRole, user);
 				return pollFormatted;
 			} catch (err) {
 				logger.error(err);
@@ -42,11 +42,11 @@ module.exports = () => {
 		};
 
 
-		const details = async pollId => {
+		const details = async (pollId, userRole, user) => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
 				if (!pollFromDB) throw new Error('poll_not_found');
-				const pollFormatted = formatPollDetails(pollFromDB);
+				const pollFormatted = formatPollDetails(pollFromDB, userRole, user);
 				return pollFormatted;
 			} catch (err) {
 				logger.error(err);
@@ -55,7 +55,7 @@ module.exports = () => {
 		};
 
 
-		const updateVotes = async (pollId, user, option) => {
+		const updateVotes = async (pollId, user, option, userRole) => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
 				if (!pollFromDB) throw new Error('poll_not_found');
@@ -66,7 +66,7 @@ module.exports = () => {
 					{ $push: { 'options.$.votes': user } },
 				);
 				const pollUpdated = await Poll.findOne({ _id: pollId });
-				const pollFormatted = formatPollDetails(pollUpdated);
+				const pollFormatted = formatPollDetails(pollUpdated, userRole, user);
 				return pollFormatted;
 			} catch (err) {
 				logger.error(err);
@@ -75,7 +75,7 @@ module.exports = () => {
 		};
 
 
-		const close = async pollId => {
+		const close = async (pollId, userRole, user) => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: pollId });
 				if (!pollFromDB) throw new Error('poll_not_found');
@@ -85,7 +85,7 @@ module.exports = () => {
 					{ active: false },
 				);
 				const pollUpdated = await Poll.findOne({ _id: pollId });
-				const pollFormatted = formatPollDetails(pollUpdated);
+				const pollFormatted = formatPollDetails(pollUpdated, userRole, user);
 				return pollFormatted;
 			} catch (err) {
 				logger.error(err);
@@ -94,11 +94,11 @@ module.exports = () => {
 		};
 
 
-		const deleteById = async pollId => {
+		const deleteById = async (pollId, userRole, user) => {
 			try {
 				const pollFromDB = await Poll.findByIdAndRemove({ _id: pollId });
 				if (!pollFromDB) throw new Error('poll_not_found');
-				const pollFormatted = formatPollDetails(pollFromDB);
+				const pollFormatted = formatPollDetails(pollFromDB, userRole, user);
 				return pollFormatted;
 			} catch (err) {
 				logger.error(err);

@@ -1,4 +1,18 @@
 
+
+/**
+ * @typedef PollCompact
+ * @property {string} _id
+ * @property {string} name
+ * @property {boolean} active
+ * @property {string} hasVoted
+ */
+
+/**
+ * @typedef PollsList
+ * @property {Array.<PollCompact>} polls
+ */
+
 /**
  * @typedef Options
  * @property {Array.<string>} votes
@@ -14,11 +28,6 @@
  */
 
 /**
- * @typedef PollsList
- * @property {Array.<Poll>} polls
- */
-
-/**
  * @typedef NewPoll
  * @property {string} name
  * @property {string} description
@@ -27,7 +36,6 @@
 
 /**
  * @typedef UserVote
- * @property {string} user
  * @property {string} option
  */
 

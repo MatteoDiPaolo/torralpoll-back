@@ -7,9 +7,9 @@ const serverError = errorFactory();
 
 module.exports = () => {
 	const start = async ({ store }) => {
-		const listAll = async () => {
+		const listAll = async user => {
 			try {
-				const polls = await store.listAll();
+				const polls = await store.listAll(user);
 				return polls;
 			} catch (err) {
 				throw serverError('Error listing polls');
@@ -17,9 +17,9 @@ module.exports = () => {
 		};
 
 
-		const create = async (name, description, options) => {
+		const create = async (name, description, options, userRole, user) => {
 			try {
-				const poll = await store.create(name, description, options);
+				const poll = await store.create(name, description, options, userRole, user);
 				return poll;
 			} catch (err) {
 				throw serverError('Error creating a new poll');
@@ -27,9 +27,9 @@ module.exports = () => {
 		};
 
 
-		const details = async id => {
+		const details = async (id, userRole, user) => {
 			try {
-				const poll = await store.details(id);
+				const poll = await store.details(id, userRole, user);
 				return poll;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
@@ -38,9 +38,9 @@ module.exports = () => {
 		};
 
 
-		const vote = async (id, user, option) => {
+		const vote = async (id, user, option, userRole) => {
 			try {
-				const poll = await store.updateVotes(id, user, option);
+				const poll = await store.updateVotes(id, user, option, userRole);
 				return poll;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
@@ -51,9 +51,9 @@ module.exports = () => {
 		};
 
 
-		const close = async id => {
+		const close = async (id, userRole, user) => {
 			try {
-				const poll = await store.close(id);
+				const poll = await store.close(id, userRole, user);
 				return poll;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
@@ -63,9 +63,9 @@ module.exports = () => {
 		};
 
 
-		const deleteById = async id => {
+		const deleteById = async (id, userRole, user) => {
 			try {
-				const poll = await store.deleteById(id);
+				const poll = await store.deleteById(id, userRole, user);
 				return poll;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);

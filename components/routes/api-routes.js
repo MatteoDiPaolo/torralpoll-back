@@ -94,7 +94,8 @@ module.exports = () => {
 			try {
 				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
 				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
-				const pollsList = await controller.listAll();
+				const user = resFromGoogle.email;
+				const pollsList = await controller.listAll(user);
 				return res.json(pollsList);
 			} catch (err) {
 				return next(tagError(err));
@@ -116,8 +117,10 @@ module.exports = () => {
 				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
 				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
+				const user = resFromGoogle.email;
+				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
 				const { name, description, options } = req.body;
-				const newPoll = await controller.create(name, description, options);
+				const newPoll = await controller.create(name, description, options, userRole, user);
 				return res.json(newPoll);
 			} catch (err) {
 				return next(tagError(err));
@@ -139,8 +142,10 @@ module.exports = () => {
 			try {
 				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
 				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				const user = resFromGoogle.email;
+				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
 				const { id } = req.params;
-				const pollDetails = await controller.details(id);
+				const pollDetails = await controller.details(id, userRole, user);
 				return res.json(pollDetails);
 			} catch (err) {
 				return next(tagError(err));
@@ -163,9 +168,11 @@ module.exports = () => {
 			try {
 				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
 				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
+				const user = resFromGoogle.email;
+				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
 				const { id } = req.params;
-				const { user, option } = req.body;
-				const pollUpdated = await controller.vote(id, user, option);
+				const { option } = req.body;
+				const pollUpdated = await controller.vote(id, user, option, userRole);
 				return res.json(pollUpdated);
 			} catch (err) {
 				return next(tagError(err));
@@ -188,8 +195,10 @@ module.exports = () => {
 				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
 				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
+				const user = resFromGoogle.email;
+				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
 				const { id } = req.params;
-				const pollClosed = await controller.close(id);
+				const pollClosed = await controller.close(id, userRole, user);
 				return res.json(pollClosed);
 			} catch (err) {
 				return next(tagError(err));
@@ -212,8 +221,10 @@ module.exports = () => {
 				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
 				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
 				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
+				const user = resFromGoogle.email;
+				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
 				const { id } = req.params;
-				const pollDeleted = await controller.deleteById(id);
+				const pollDeleted = await controller.deleteById(id, userRole, user);
 				return res.json(pollDeleted);
 			} catch (err) {
 				return next(tagError(err));
