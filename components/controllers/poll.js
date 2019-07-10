@@ -1,12 +1,20 @@
 const { errorFactory } = require('../../lib/errors');
 
 const notFoundError = errorFactory('not_found');
-// const unauthorizedError = errorFactory('unauthorized');
-// const wrongInputError = errorFactory('wrong_input');
 const serverError = errorFactory();
 
 module.exports = () => {
 	const start = async ({ store }) => {
+		const create = async (timestampCreation, name, description, options, user) => {
+			try {
+				const pollId = await store.create(timestampCreation, name, description, options, user);
+				return pollId;
+			} catch (err) {
+				throw serverError('Error creating a new poll');
+			}
+		};
+
+
 		const listAll = async user => {
 			try {
 				const polls = await store.listAll(user);
@@ -17,19 +25,23 @@ module.exports = () => {
 		};
 
 
-		const create = async (name, description, options, userRole, user) => {
+		const vote = async (id, option, user) => {
 			try {
-				const poll = await store.create(name, description, options, userRole, user);
-				return poll;
+				const pollId = await store.updateVotes(id, option, user);
+				return pollId;
 			} catch (err) {
-				throw serverError('Error creating a new poll');
+				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
+				if (err.message === 'poll_not_active') throw serverError(`Poll: ${id} is inactive`);
+				if (err.message === 'option_not_available') throw serverError(`Option: ${option} does not exists for poll: ${id}`);
+				if (err.message === 'user_has_already_voted') throw serverError(`User: ${user.name} has already voted for poll: ${id}`);
+				throw serverError(`Error submitting vote for poll: ${id} - user: ${user.name} - option: ${option}`);
 			}
 		};
 
 
-		const details = async (id, userRole, user) => {
+		const details = async (id, user) => {
 			try {
-				const poll = await store.details(id, userRole, user);
+				const poll = await store.details(id, user);
 				return poll;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
@@ -38,23 +50,10 @@ module.exports = () => {
 		};
 
 
-		const vote = async (id, user, option, userRole) => {
+		const close = async id => {
 			try {
-				const poll = await store.updateVotes(id, user, option, userRole);
-				return poll;
-			} catch (err) {
-				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
-				if (err.message === 'poll_not_active') throw serverError(`Poll: ${id} is inactive`);
-				if (err.message === 'user_has_already_voted') throw serverError(`User: ${user} has already voted for poll: ${id}`);
-				throw serverError(`Error submitting vote for poll: ${id} - user: ${user} - option: ${option}`);
-			}
-		};
-
-
-		const close = async (id, userRole, user) => {
-			try {
-				const poll = await store.close(id, userRole, user);
-				return poll;
+				const pollId = await store.close(id);
+				return pollId;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
 				if (err.message === 'poll_already_closed') throw serverError(`Poll: ${id} is already closed`);
@@ -63,9 +62,9 @@ module.exports = () => {
 		};
 
 
-		const deleteById = async (id, userRole, user) => {
+		const deleteById = async id => {
 			try {
-				const poll = await store.deleteById(id, userRole, user);
+				const poll = await store.deleteById(id);
 				return poll;
 			} catch (err) {
 				if (err.message === 'poll_not_found') throw notFoundError(`Poll: ${id} not found`);
@@ -75,8 +74,8 @@ module.exports = () => {
 
 
 		return {
-			listAll,
 			create,
+			listAll,
 			details,
 			vote,
 			close,
