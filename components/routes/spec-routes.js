@@ -45,7 +45,7 @@
  * @property {string} name
  * @property {string} description
  * @property {boolean} active
- * @property {string} userHasVoted
+ * @property {boolean} userHasVoted
  * @property {User.model} createdBy
  */
 
