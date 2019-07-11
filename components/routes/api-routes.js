@@ -80,7 +80,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.get('/list', cors(), auth.authenticate, async (req, res, next) => {
+		app.get('/list', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
@@ -104,7 +104,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.post('/:id/vote', cors(), auth.authenticate, async (req, res, next) => {
+		app.post('/:id/vote', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
@@ -130,7 +130,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.get('/:id/details', cors(), auth.authenticate, async (req, res, next) => {
+		app.get('/:id/details', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);

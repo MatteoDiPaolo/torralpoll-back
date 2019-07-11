@@ -1,5 +1,15 @@
 
 
+const getRole = (email, config) => {
+	if (config.adminsEmails.includes(email)) {
+		return config.adminRol;
+	} else if (config.usersEmails.includes(email)) {
+		return config.userRol;
+	}
+	return 'NO ROLE';
+};
+
+
 const formatUserFromGoogleToken = (payloadFromGoogle, config) => ({
 	iss: payloadFromGoogle.iss,
 	hd: payloadFromGoogle.hd,
@@ -13,7 +23,7 @@ const formatUserFromGoogleToken = (payloadFromGoogle, config) => ({
 	iat: payloadFromGoogle.iat,
 	exp: payloadFromGoogle.exp,
 	typ: payloadFromGoogle.typ,
-	rol: config.adminsEmails.includes(payloadFromGoogle.email) ? config.adminRol : config.userRol,
+	rol: getRole(payloadFromGoogle.email, config),
 });
 
 

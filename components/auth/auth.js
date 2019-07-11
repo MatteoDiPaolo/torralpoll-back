@@ -39,7 +39,7 @@ module.exports = () => {
 		const authorise = attribute => allowedList => async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
-				if (!allowedList.includes(userFromGoogleToken[attribute])) throw new Error('User rol not valid');
+				if (!allowedList.includes(userFromGoogleToken[attribute])) throw new Error(`${attribute} not valid`);
 				return next();
 			} catch (error) {
 				return next(buildForbiddenError(`User not authorised to perform this operation: ${error.message}`));
