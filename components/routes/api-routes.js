@@ -1,19 +1,11 @@
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const request = require('request-promise-native');
 
-const { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } = require('http-status-codes');
-const { handleError, httpErrorFactory, errorFactory } = require('../../lib/errors');
+const { handleError, tagError } = require('../../lib/errors');
 
-const unauthorizedError = errorFactory('unauthorized');
-
-const buildBadRequestError = httpErrorFactory(BAD_REQUEST);
-const buildNotFoundError = httpErrorFactory(NOT_FOUND);
-const buildUnauthorisedError = httpErrorFactory(UNAUTHORIZED);
-const buildServerError = httpErrorFactory();
 
 module.exports = () => {
-	const start = async ({ app, logger, controller, config }) => {
+	const start = async ({ app, logger, controller, auth }) => {
 		app.use(bodyParser.json());
 		app.use(cors());
 		app.all('*', (req, res, next) => {
@@ -24,77 +16,74 @@ module.exports = () => {
 			next();
 		});
 
-		const tagError = err => {
-			const errors = {
-				not_found: buildNotFoundError(err.message, err.extra),
-				server_error: buildServerError(err.message, err.extra),
-				unauthorized: buildUnauthorisedError(err.message, err.extra),
-				wrong_input: buildBadRequestError(err.message, err.extra),
-			};
-			return errors[err.type || 'server_error'];
-		};
 
+		const formatUserToOnlyUsefulProps = userFromGoogleToken => ({
+			name: userFromGoogleToken.name,
+			given_name: userFromGoogleToken.given_name,
+			family_name: userFromGoogleToken.family_name,
+			email: userFromGoogleToken.email,
+			picture: userFromGoogleToken.picture,
+			rol: userFromGoogleToken.rol,
+		});
 
-		const requests = {
-			get: uri => ({
-				uri,
-				method: 'GET',
-				json: true,
-			}),
-		};
-		const isTokenValidForGoogle = tok =>
-			request(requests.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${tok}`))
-				.then(data => data)
-				.catch(err => err);
 
 		/**
 		 * This endpoint will give you the info of the user retrieved from google using the token
-		 * @route POST /user
+		 * @route GET /me
 		 * @group Users - Everything about users
-		 * @param {Token.model} token.body.required - google token
-		 * @returns {UserAuthentication.model} 200 - Success response
+		 * @returns {UsersMeResponse.model} 200 - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
 		 */
-		app.post('/user', cors(), async (req, res, next) => {
+		app.get('/me', cors(), auth.authenticate, async (req, res, next) => {
 			try {
-				const { token } = req.body;
-				const resFromGoogle = await isTokenValidForGoogle(token);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The provided token is not valid');
-				return res.json({
-					iss: resFromGoogle.iss,
-					hd: resFromGoogle.hd,
-					email: resFromGoogle.email,
-					email_verified: resFromGoogle.email_verified,
-					name: resFromGoogle.name,
-					picture: resFromGoogle.picture,
-					given_name: resFromGoogle.given_name,
-					family_name: resFromGoogle.family_name,
-					locale: resFromGoogle.locale,
-					iat: resFromGoogle.iat,
-					exp: resFromGoogle.exp,
-					typ: resFromGoogle.typ,
-					rol: ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User',
-				});
+				const { userFromGoogleToken } = res.locals;
+				return res.json(userFromGoogleToken);
 			} catch (err) {
 				return next(tagError(err));
 			}
 		});
 
+
+		/**
+		 * This endpoint will create a new poll
+		 * @route POST /create
+		 * @group Polls - Everything about polls
+		 * @param {PollCreateRequest.model} poll.body.required - new poll info
+		 * @returns {PollCreateResponse.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
+		app.post('/create', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
+			try {
+				const { userFromGoogleToken } = res.locals;
+				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
+				const { name, description, options } = req.body;
+				const timestampCreation = new Date();
+				const pollId = await controller.create(timestampCreation, name, description, options, user);
+				return res.json(pollId);
+			} catch (err) {
+				return next(tagError(err));
+			}
+		});
+
+
 		/**
 		 * This endpoint will give you a list of each poll stored into the DB
 		 * @route GET /list
 		 * @group Polls - Everything about polls
-		 * @returns {PollsList.model} 200 - Success response
+		 * @returns {PollsListResponse.model} 200  - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.get('/list', cors(), async (req, res, next) => {
+		app.get('/list', cors(), auth.authenticate, async (req, res, next) => {
 			try {
-				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
-				const user = resFromGoogle.email;
+				const { userFromGoogleToken } = res.locals;
+				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
 				const pollsList = await controller.listAll(user);
 				return res.json(pollsList);
 			} catch (err) {
@@ -102,129 +91,97 @@ module.exports = () => {
 			}
 		});
 
-		/**
-		 * This endpoint will create a new poll
-		 * @route POST /create
-		 * @group Polls - Everything about polls
-		 * @param {NewPoll.model} newPoll.body.required - new poll info
-		 * @returns {Poll.model} 200 - Success response
-		 * @returns {Error401.model} 401 - Unauthorized
-		 * @returns {ErrorServer.model} 500 - Server Error
-		 * @security JWT
-		 */
-		app.post('/create', cors(), async (req, res, next) => {
-			try {
-				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
-				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
-				const user = resFromGoogle.email;
-				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
-				const { name, description, options } = req.body;
-				const newPoll = await controller.create(name, description, options, userRole, user);
-				return res.json(newPoll);
-			} catch (err) {
-				return next(tagError(err));
-			}
-		});
-
-		/**
-		 * This endpoint will give you all the info related to a poll
-		 * @route GET /{id}/details
-		 * @group Polls - Everything about polls
-		 * @param {string} id.path.required - poll id
-		 * @returns {Poll.model} 200 - Success response
-		 * @returns {Error401.model} 401 - Unauthorized
-		 * @returns {Error404.model} 404 - Not found
-		 * @returns {ErrorServer.model} 500 - Server Error
-		 * @security JWT
-		 */
-		app.get('/:id/details', cors(), async (req, res, next) => {
-			try {
-				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
-				const user = resFromGoogle.email;
-				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
-				const { id } = req.params;
-				const pollDetails = await controller.details(id, userRole, user);
-				return res.json(pollDetails);
-			} catch (err) {
-				return next(tagError(err));
-			}
-		});
 
 		/**
 		 * This endpoint will let you vote for a given poll
 		 * @route POST /{id}/vote
 		 * @group Polls - Everything about polls
 		 * @param {string} id.path.required - poll id
-		 * @param {UserVote.model} userVote.body.required - user vote
-		 * @returns {Poll.model} 200 - Success response
+		 * @param {PollVoteRequest.model} option.body.required - user vote
+		 * @returns {PollVoteResponse.model} 200 - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
 		 * @returns {Error404.model} 404 - Not found
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.post('/:id/vote', cors(), async (req, res, next) => {
+		app.post('/:id/vote', cors(), auth.authenticate, async (req, res, next) => {
 			try {
-				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
-				const user = resFromGoogle.email;
-				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
+				const { userFromGoogleToken } = res.locals;
+				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
 				const { id } = req.params;
 				const { option } = req.body;
-				const pollUpdated = await controller.vote(id, user, option, userRole);
-				return res.json(pollUpdated);
+				const pollId = await controller.vote(id, option, user);
+				return res.json(pollId);
 			} catch (err) {
 				return next(tagError(err));
 			}
 		});
+
+
+		/**
+		 * This endpoint will give you all the info related to a poll
+		 * @route GET /{id}/details
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @returns {PollAdminResponse.model} 200 (Admin) - Success response
+		 * @returns {PollUserResponse.model} 200 (User) - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
+		app.get('/:id/details', cors(), auth.authenticate, async (req, res, next) => {
+			try {
+				const { userFromGoogleToken } = res.locals;
+				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
+				const { id } = req.params;
+				const pollDetails = await controller.details(id, user);
+				return res.json(pollDetails);
+			} catch (err) {
+				return next(tagError(err));
+			}
+		});
+
 
 		/**
 		 * This endpoint will let you close a given poll
 		 * @route POST /{id}/close
 		 * @group Polls - Everything about polls
 		 * @param {string} id.path.required - poll id
-		 * @returns {Poll.model} 200 - Success response
+		 * @returns {PollCloseResponse.model} 200 - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
 		 * @returns {Error404.model} 404 - Not found
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.post('/:id/close', cors(), async (req, res, next) => {
+		app.post('/:id/close', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
 			try {
-				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
-				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
-				const user = resFromGoogle.email;
-				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
 				const { id } = req.params;
-				const pollClosed = await controller.close(id, userRole, user);
-				return res.json(pollClosed);
+				const pollId = await controller.close(id);
+				return res.json(pollId);
 			} catch (err) {
 				return next(tagError(err));
 			}
 		});
+
 
 		/**
 		 * This endpoint will let you delete a given poll
 		 * @route DELETE /{id}/delete
 		 * @group Polls - Everything about polls
 		 * @param {string} id.path.required - poll id
-		 * @returns {Poll.model} 200 - Success response
+		 * @returns {PollDeleteResponse.model} 200 - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
 		 * @returns {Error404.model} 404 - Not found
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.delete('/:id/delete', cors(), async (req, res, next) => {
+		app.delete('/:id/delete', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
 			try {
-				const resFromGoogle = await isTokenValidForGoogle(req.headers.authorization);
-				if (resFromGoogle.aud !== config.googleClientId) throw unauthorizedError('The user is not authenticated');
-				if (!['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email)) throw unauthorizedError('The user is not authorized');
-				const user = resFromGoogle.email;
-				const userRole = ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'].includes(resFromGoogle.email) ? 'Admin' : 'User';
 				const { id } = req.params;
-				const pollDeleted = await controller.deleteById(id, userRole, user);
+				const pollDeleted = await controller.deleteById(id);
 				return res.json(pollDeleted);
 			} catch (err) {
 				return next(tagError(err));

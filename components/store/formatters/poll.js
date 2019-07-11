@@ -1,75 +1,72 @@
-/* eslint-disable no-plusplus */
+const { userHasAlreadyVoted, getVotedOption } = require('../utils/helpers');
 
+const formatUserFromDB = userFromDB => ({
+	name: userFromDB.name,
+	given_name: userFromDB.given_name,
+	family_name: userFromDB.family_name,
+	email: userFromDB.email,
+	picture: userFromDB.picture,
+	rol: userFromDB.rol,
+});
 
-const formatPollDetails = (pollFromDB, userRole, user) => {
-	const votedOption = () => {
-		for (let i = 0; i < pollFromDB.options.length; i++) {
-			if (pollFromDB.options[i].votes.includes(user)) {
-				return pollFromDB.options[i].name;
-			}
-		}
-		return null;
-	};
+const formatNewPollToDB = (timestampCreation, name, description, options, user) => ({
+	timestampCreation,
+	name,
+	description,
+	active: true,
+	createdBy: user,
+	options: options.map(option => ({ name: option, votes: [] })),
+});
 
-	switch (userRole) {
+const formatPollCreateFromDB = pollFromDB => ({
+	id: pollFromDB._id,
+});
+
+const formatPollsListFromDB = (pollsListFromDB, user) => ({
+	polls: pollsListFromDB.map(pollFromDB => ({
+		id: pollFromDB._id,
+		timestampCreation: pollFromDB.timestampCreation,
+		name: pollFromDB.name,
+		description: pollFromDB.description,
+		active: pollFromDB.active,
+		userHasVoted: userHasAlreadyVoted(user, pollFromDB),
+		createdBy: formatUserFromDB(pollFromDB.createdBy),
+	})),
+});
+
+const formatPollDetailsFromDB = (pollFromDB, user) => {
+	switch (user.rol) {
 	case 'Admin':
 		return {
-			_id: pollFromDB._id,
+			id: pollFromDB._id,
+			timestampCreation: pollFromDB.timestampCreation,
 			name: pollFromDB.name,
 			description: pollFromDB.description,
 			active: pollFromDB.active,
-			options: pollFromDB.options.map(op => ({ votes: op.votes, votesCount: op.votes.length, name: op.name })),
-			votedOption: votedOption(pollFromDB),
-			createdBy: user,
+			options: pollFromDB.options.map(op => ({ votes: op.votes.map(vote => formatUserFromDB(vote)), votesCount: op.votes.length, name: op.name })),
+			votedOption: getVotedOption(user, pollFromDB),
+			createdBy: formatUserFromDB(pollFromDB.createdBy),
 		};
 	case 'User':
 		return {
-			_id: pollFromDB._id,
+			id: pollFromDB._id,
+			timestampCreation: pollFromDB.timestampCreation,
 			name: pollFromDB.name,
 			description: pollFromDB.description,
 			active: pollFromDB.active,
 			options: pollFromDB.options.map(op => ({ votesCount: op.votes.length, name: op.name })),
-			votedOption: votedOption(pollFromDB),
-			createdBy: user,
+			votedOption: getVotedOption(user, pollFromDB),
+			createdBy: formatUserFromDB(pollFromDB.createdBy),
 		};
 	default:
 		return {};
 	}
 };
 
-const formatPollsList = (pollsListFromDB, user) => {
-	const hasAlreadyVoted = pollFromDB => {
-		for (let i = 0; i < pollFromDB.options.length; i++) {
-			if (pollFromDB.options[i].votes.includes(user)) {
-				return true;
-			}
-		}
-		return false;
-	};
-
-	return {
-		polls: pollsListFromDB.map(pollFromDB => ({
-			_id: pollFromDB._id,
-			name: pollFromDB.name,
-			description: pollFromDB.description,
-			active: pollFromDB.active,
-			hasVoted: hasAlreadyVoted(pollFromDB),
-		})),
-	};
-};
-
-const formatNewPoll = (name, description, options) => (
-	{
-		name,
-		description,
-		active: true,
-		options: options.map(option => ({ name: option, votes: [] })),
-	}
-);
-
 
 module.exports = {
-	formatPollsList,
-	formatNewPoll,
-	formatPollDetails,
+	formatNewPollToDB,
+	formatPollCreateFromDB,
+	formatPollsListFromDB,
+	formatPollDetailsFromDB,
 };

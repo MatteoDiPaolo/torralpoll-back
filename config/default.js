@@ -6,10 +6,14 @@ module.exports = {
 	store: {
 		mongodbConnectionString: process.env.MONGODB_CONNECTION_STRING,
 	},
+	auth: {
+		googleClientId: process.env.GOOGLE_CLIENT_ID,
+		adminsEmails: ['matteo.dipaolantonio@guidesmiths.com', 'lucas.jin@guidesmiths.com'],
+		usersEmails: [],
+		adminRol: 'Admin',
+		userRol: 'User',
+	},
 	routes: {
-		api: {
-			googleClientId: process.env.GOOGLE_CLIENT_ID,
-		},
 		admin: {
 			swaggerOptions: {
 				swaggerDefinition: {
