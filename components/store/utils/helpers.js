@@ -31,8 +31,12 @@ const getVotedOption = (user, pollFromDB) => {
 	return null;
 };
 
+
+const newPollHasDuplicatedOptions = options => options.some((name, index) => options.indexOf(name) !== index);
+
 module.exports = {
 	userHasAlreadyVoted,
 	optionDoesExists,
 	getVotedOption,
+	newPollHasDuplicatedOptions,
 };

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Poll = require('./models/poll');
 const { formatNewPollToDB, formatPollCreateFromDB, formatPollsListFromDB, formatPollDetailsFromDB } = require('./formatters/poll');
-const { userHasAlreadyVoted, optionDoesExists } = require('./utils/helpers');
+const { userHasAlreadyVoted, optionDoesExists, newPollHasDuplicatedOptions } = require('./utils/helpers');
 
 module.exports = () => {
 	const start = async ({ logger, config }) => {
@@ -19,6 +19,7 @@ module.exports = () => {
 
 		const create = async (timestampCreation, name, description, options, user) => {
 			try {
+				if (newPollHasDuplicatedOptions(options)) throw new Error('poll_with_duplicated_options');
 				const newPoll = formatNewPollToDB(timestampCreation, name, description, options, user);
 				const newPollFromDB = await new Poll(newPoll).save();
 				return formatPollCreateFromDB(newPollFromDB);

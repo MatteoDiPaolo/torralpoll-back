@@ -10,10 +10,10 @@ module.exports = () => {
 				const pollId = await store.create(timestampCreation, name, description, options, user);
 				return pollId;
 			} catch (err) {
+				if (err.message === 'poll_with_duplicated_options') throw serverError('New poll has duplicated options');
 				throw serverError('Error creating a new poll');
 			}
 		};
-
 
 		const listAll = async user => {
 			try {
