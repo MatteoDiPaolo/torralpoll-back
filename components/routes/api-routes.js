@@ -77,6 +77,7 @@ module.exports = () => {
 		 * @group Polls - Everything about polls
 		 * @returns {PollsListResponse.model} 200  - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
@@ -100,6 +101,7 @@ module.exports = () => {
 		 * @param {PollVoteRequest.model} option.body.required - user vote
 		 * @returns {PollVoteResponse.model} 200 - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
 		 * @returns {Error404.model} 404 - Not found
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
@@ -126,6 +128,7 @@ module.exports = () => {
 		 * @returns {PollAdminResponse.model} 200 (Admin) - Success response
 		 * @returns {PollUserResponse.model} 200 (User) - Success response
 		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
 		 * @returns {Error404.model} 404 - Not found
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
