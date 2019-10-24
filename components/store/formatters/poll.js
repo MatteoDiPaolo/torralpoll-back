@@ -31,6 +31,7 @@ const formatPollsListFromDB = (pollsListFromDB, user) => ({
 		active: pollFromDB.active,
 		userHasVoted: userHasAlreadyVoted(user, pollFromDB),
 		createdBy: formatUserFromDB(pollFromDB.createdBy),
+		participants: pollFromDB.options.reduce((total, option) => total + option.votes.length, 0),
 	})),
 });
 
