@@ -24,6 +24,7 @@ const USERS_EMAILS = [
 	'ruben.romero@guidesmiths.com', 'carlos.serrano@guidesmiths.com',
 	'josep.servat@guidesmiths.com', 'jm.torralvo@guidesmiths.com',
 	'ulises.gascon@guidesmiths.com', 'laura.corbi@guidesmiths.com',
+	'daniel.colas@guidesmiths.com',
 ];
 
 
