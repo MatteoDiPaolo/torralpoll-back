@@ -6,8 +6,8 @@ const ADMINS_EMAILS = [
 const USERS_EMAILS = [
 	'matteo.del.passo89@gmail.com', 'lucas1004jx@gmail.com',
 	'daniel.alarcon@guidesmiths.com', 'pablo.albaladejo@guidesmiths.com',
-	'fernando.aparicio@guidesmiths.com', 'javier.arriero@guidesmiths.com',
-	'ismael.bakkali@guidesmiths.com', 'maria.batet@guidesmiths.com',
+	'david.diez@guidesmiths.com', 'javier.arriero@guidesmiths.com',
+	'ismael.bakkali@guidesmiths.com', 'daniel.colas@guidesmiths.com',
 	'michael.beattie@guidesmiths.com', 'javier.bergantinos@guidesmiths.com',
 	'guillermo.c.martinez@guidesmiths.com', 'joseantonio.dorado@guidesmiths.com',
 	'nuria.extremadouro@guidesmiths.com', 'alberto.fernandez@guidesmiths.com',
@@ -24,7 +24,6 @@ const USERS_EMAILS = [
 	'ruben.romero@guidesmiths.com', 'carlos.serrano@guidesmiths.com',
 	'josep.servat@guidesmiths.com', 'jm.torralvo@guidesmiths.com',
 	'ulises.gascon@guidesmiths.com', 'laura.corbi@guidesmiths.com',
-	'daniel.colas@guidesmiths.com',
 ];
 
 
