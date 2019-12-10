@@ -90,7 +90,7 @@ module.exports = () => {
 		const updateById = async (id, timestampModified, name, description, options, category) => {
 			try {
 				if (newPollHasDuplicatedOptions(options)) throw new Error('poll_with_duplicated_options');
-				const modifiedPoll = formatPollToDB(timestampModified, name, description, category);
+				const modifiedPoll = formatPollToDB(timestampModified, name, description, options, category);
 				const pollFromDB = await Poll.findByIdAndUpdate({ _id: id }, { $set: modifiedPoll }, { upsert: true });
 				if (!pollFromDB) throw new Error('poll_not_found');
 				return { id };
