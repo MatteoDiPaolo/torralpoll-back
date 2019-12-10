@@ -24,6 +24,7 @@ const pollSchema = new Schema({
 	timestampCreation: Date,
 	name: String,
 	description: String,
+	category: String,
 	active: Boolean,
 	options: [pollOptionSchema],
 	createdBy: userSchema,

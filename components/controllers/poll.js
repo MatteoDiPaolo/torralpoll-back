@@ -5,9 +5,9 @@ const serverError = errorFactory();
 
 module.exports = () => {
 	const start = async ({ store }) => {
-		const create = async (timestampCreation, name, description, options, user) => {
+		const create = async (timestampCreation, name, description, options, category, user) => {
 			try {
-				const pollId = await store.create(timestampCreation, name, description, options, user);
+				const pollId = await store.create(timestampCreation, name, description, options, category, user);
 				return pollId;
 			} catch (err) {
 				if (err.message === 'poll_with_duplicated_options') throw serverError('New poll has duplicated options');
@@ -72,6 +72,15 @@ module.exports = () => {
 			}
 		};
 
+		const updateById = async (id, timestampCreation, name, description, options, category) => {
+			try {
+				const pollId = await store.updateById(id, timestampCreation, name, description, options, category);
+				return pollId;
+			} catch (err) {
+				if (err.message === 'poll_with_duplicated_options') throw serverError('New poll has duplicated options');
+				throw serverError('Error updating a new poll');
+			}
+		};
 
 		return {
 			create,
@@ -80,6 +89,7 @@ module.exports = () => {
 			vote,
 			close,
 			deleteById,
+			updateById,
 		};
 	};
 

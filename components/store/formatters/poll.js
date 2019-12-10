@@ -9,13 +9,26 @@ const formatUserFromDB = userFromDB => ({
 	rol: userFromDB.rol,
 });
 
-const formatNewPollToDB = (timestampCreation, name, description, options, user) => ({
+const formatNewPollToDB = (timestampCreation, name, description, options, category, user) => ({
 	timestampCreation,
 	name,
 	description,
+	category,
 	active: true,
 	createdBy: user,
 	options: options.map(option => ({ name: option, votes: [] })),
+});
+
+const formatPollToDB = (timestampModified, name, description, options, category) => ({
+	timestampModified,
+	name,
+	description,
+	category,
+	options: options.map(option => ({ name: option, votes: [] })),
+});
+
+const formatNewCategoryToDB = name => ({
+	name,
 });
 
 const formatPollCreateFromDB = pollFromDB => ({
@@ -28,6 +41,7 @@ const formatPollsListFromDB = (pollsListFromDB, user) => ({
 		timestampCreation: pollFromDB.timestampCreation,
 		name: pollFromDB.name,
 		description: pollFromDB.description,
+		category: pollFromDB.category,
 		active: pollFromDB.active,
 		userHasVoted: userHasAlreadyVoted(user, pollFromDB),
 		createdBy: formatUserFromDB(pollFromDB.createdBy),
@@ -43,8 +57,13 @@ const formatPollDetailsFromDB = (pollFromDB, user) => {
 			timestampCreation: pollFromDB.timestampCreation,
 			name: pollFromDB.name,
 			description: pollFromDB.description,
+			category: pollFromDB.category,
 			active: pollFromDB.active,
-			options: pollFromDB.options.map(op => ({ votes: op.votes.map(vote => formatUserFromDB(vote)), votesCount: op.votes.length, name: op.name })),
+			options: pollFromDB.options.map(op => ({
+				votes: op.votes.map(vote => formatUserFromDB(vote)),
+				votesCount: op.votes.length,
+				name: op.name,
+			})),
 			votedOption: getVotedOption(user, pollFromDB),
 			createdBy: formatUserFromDB(pollFromDB.createdBy),
 		};
@@ -67,6 +86,8 @@ const formatPollDetailsFromDB = (pollFromDB, user) => {
 
 module.exports = {
 	formatNewPollToDB,
+	formatPollToDB,
+	formatNewCategoryToDB,
 	formatPollCreateFromDB,
 	formatPollsListFromDB,
 	formatPollDetailsFromDB,

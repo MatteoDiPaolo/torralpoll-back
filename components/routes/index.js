@@ -6,6 +6,6 @@ module.exports = new System({ name: 'routes' })
 	.add('routes.admin', adminRoutes())
 	.dependsOn('config', 'logger', 'app', 'middleware.prepper', 'manifest')
 	.add('routes.api', apiRoutes())
-	.dependsOn('app', 'logger', 'controller', 'auth')
+	.dependsOn('app', 'logger', 'controller.poll', 'controller.category', 'auth')
 	.add('routes')
 	.dependsOn('routes.admin', 'routes.api');
