@@ -19,12 +19,11 @@ const formatNewPollToDB = (timestampCreation, name, description, options, catego
 	options: options.map(option => ({ name: option, votes: [] })),
 });
 
-const formatPollToDB = (timestampModified, name, description, options, category) => ({
+const formatPollToDB = (timestampModified, name, description, category) => ({
 	timestampModified,
 	name,
 	description,
 	category,
-	options: options.map(option => ({ name: option, votes: [] })),
 });
 
 const formatNewCategoryToDB = name => ({
