@@ -6,7 +6,7 @@ const ADMINS_EMAILS = [
 const USERS_EMAILS = [
 	'matteo.del.passo89@gmail.com', 'lucas1004jx@gmail.com',
 	'daniel.alarcon@guidesmiths.com', 'pablo.albaladejo@guidesmiths.com',
-	'fernando.aparicio@guidesmiths.com', 'javier.arriero@guidesmiths.com',
+	'daniel.colas@guidesmiths.com', 'javier.arriero@guidesmiths.com',
 	'ismael.bakkali@guidesmiths.com', 'maria.batet@guidesmiths.com',
 	'michael.beattie@guidesmiths.com', 'javier.bergantinos@guidesmiths.com',
 	'guillermo.c.martinez@guidesmiths.com', 'joseantonio.dorado@guidesmiths.com',
