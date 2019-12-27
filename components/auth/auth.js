@@ -41,7 +41,7 @@ module.exports = () => {
 				const { userFromGoogleToken } = res.locals;
 				if (['close', 'delete'].includes(operation)) {
 					const { id } = req.params;
-					const creator = await store.creator(id);
+					const creator = await store.getCreator(id);
 					if (userFromGoogleToken.email === creator.email) {
 						userFromGoogleToken.rol = 'Creator';
 					}

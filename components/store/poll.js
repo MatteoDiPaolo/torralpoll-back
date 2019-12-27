@@ -58,7 +58,7 @@ module.exports = () => {
 		};
 
 
-		const creator = async id => {
+		const getCreator = async id => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: id });
 				if (!pollFromDB) throw new Error('poll_not_found');
@@ -107,7 +107,7 @@ module.exports = () => {
 			details,
 			close,
 			deleteById,
-			creator,
+			getCreator,
 		};
 	};
 
