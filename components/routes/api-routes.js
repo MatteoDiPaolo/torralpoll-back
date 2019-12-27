@@ -27,14 +27,14 @@ module.exports = () => {
 
 
 		/**
-     * This endpoint will give you the info of the user retrieved from google using the token
-     * @route GET /me
-     * @group Users - Everything about users
-     * @returns {UsersMeResponse.model} 200 - Success response
-     * @returns {Error401.model} 401 - Unauthorized
-     * @returns {ErrorServer.model} 500 - Server Error
-     * @security JWT
-     */
+		 * This endpoint will give you the info of the user retrieved from google using the token
+		 * @route GET /me
+		 * @group Users - Everything about users
+		 * @returns {UsersMeResponse.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
 		app.get('/me', cors(), auth.authenticate, async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
@@ -46,16 +46,16 @@ module.exports = () => {
 
 
 		/**
-     * This endpoint will create a new poll
-     * @route POST /create
-     * @group Polls - Everything about polls
-     * @param {PollCreateRequest.model} poll.body.required - new poll info
-     * @returns {PollCreateResponse.model} 200 - Success response
-     * @returns {Error401.model} 401 - Unauthorized
-     * @returns {Error403.model} 403 - Forbidden
-     * @returns {ErrorServer.model} 500 - Server Error
-     * @security JWT
-     */
+		 * This endpoint will create a new poll
+		 * @route POST /create
+		 * @group Polls - Everything about polls
+		 * @param {PollCreateRequest.model} poll.body.required - new poll info
+		 * @returns {PollCreateResponse.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
 		app.post('/create', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
@@ -71,15 +71,15 @@ module.exports = () => {
 
 
 		/**
-     * This endpoint will give you a list of each poll stored into the DB
-     * @route GET /list
-     * @group Polls - Everything about polls
-     * @returns {PollsListResponse.model} 200  - Success response
-     * @returns {Error401.model} 401 - Unauthorized
-     * @returns {Error403.model} 403 - Forbidden
-     * @returns {ErrorServer.model} 500 - Server Error
-     * @security JWT
-     */
+		 * This endpoint will give you a list of each poll stored into the DB
+		 * @route GET /list
+		 * @group Polls - Everything about polls
+		 * @returns {PollsListResponse.model} 200  - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
 		app.get('/list', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
@@ -93,18 +93,18 @@ module.exports = () => {
 
 
 		/**
-     * This endpoint will let you vote for a given poll
-     * @route POST /{id}/vote
-     * @group Polls - Everything about polls
-     * @param {string} id.path.required - poll id
-     * @param {PollVoteRequest.model} option.body.required - user vote
-     * @returns {PollVoteResponse.model} 200 - Success response
-     * @returns {Error401.model} 401 - Unauthorized
-     * @returns {Error403.model} 403 - Forbidden
-     * @returns {Error404.model} 404 - Not found
-     * @returns {ErrorServer.model} 500 - Server Error
-     * @security JWT
-     */
+		 * This endpoint will let you vote for a given poll
+		 * @route POST /{id}/vote
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @param {PollVoteRequest.model} option.body.required - user vote
+		 * @returns {PollVoteResponse.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
 		app.post('/:id/vote', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
@@ -120,18 +120,18 @@ module.exports = () => {
 
 
 		/**
-     * This endpoint will give you all the info related to a poll
-     * @route GET /{id}/details
-     * @group Polls - Everything about polls
-     * @param {string} id.path.required - poll id
-     * @returns {PollAdminResponse.model} 200 (Admin) - Success response
-     * @returns {PollUserResponse.model} 200 (User) - Success response
-     * @returns {Error401.model} 401 - Unauthorized
-     * @returns {Error403.model} 403 - Forbidden
-     * @returns {Error404.model} 404 - Not found
-     * @returns {ErrorServer.model} 500 - Server Error
-     * @security JWT
-     */
+		 * This endpoint will give you all the info related to a poll
+		 * @route GET /{id}/details
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @returns {PollAdminResponse.model} 200 (Admin) - Success response
+		 * @returns {PollUserResponse.model} 200 (User) - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
 		app.get('/:id/details', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
@@ -146,17 +146,17 @@ module.exports = () => {
 
 
 		/**
-     * This endpoint will let you close a given poll
-     * @route POST /{id}/close
-     * @group Polls - Everything about polls
-     * @param {string} id.path.required - poll id
-     * @returns {PollCloseResponse.model} 200 - Success response
-     * @returns {Error401.model} 401 - Unauthorized
-     * @returns {Error403.model} 403 - Forbidden
-     * @returns {Error404.model} 404 - Not found
-     * @returns {ErrorServer.model} 500 - Server Error
-     * @security JWT
-     */
+		 * This endpoint will let you close a given poll
+		 * @route POST /{id}/close
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @returns {PollCloseResponse.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
 		app.post('/:id/close', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
 			try {
 				const { id } = req.params;
@@ -169,17 +169,17 @@ module.exports = () => {
 
 
 		/**
-     * This endpoint will let you delete a given poll
-     * @route DELETE /{id}/delete
-     * @group Polls - Everything about polls
-     * @param {string} id.path.required - poll id
-     * @returns {PollDeleteResponse.model} 200 - Success response
-     * @returns {Error401.model} 401 - Unauthorized
-     * @returns {Error403.model} 403 - Forbidden
-     * @returns {Error404.model} 404 - Not found
-     * @returns {ErrorServer.model} 500 - Server Error
-     * @security JWT
-     */
+		 * This endpoint will let you delete a given poll
+		 * @route DELETE /{id}/delete
+		 * @group Polls - Everything about polls
+		 * @param {string} id.path.required - poll id
+		 * @returns {PollDeleteResponse.model} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {Error404.model} 404 - Not found
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
 		app.delete('/:id/delete', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
 			try {
 				const { id } = req.params;
