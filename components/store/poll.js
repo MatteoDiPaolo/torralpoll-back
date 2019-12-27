@@ -1,5 +1,5 @@
 const Poll = require('./models/poll');
-const { formatNewPollToDB, formatPollCreateFromDB, formatPollsListFromDB, formatPollDetailsFromDB } = require('./formatters/poll');
+const { formatNewPollToDB, formatPollCreateFromDB, formatPollsListFromDB, formatPollDetailsFromDB, formatPollCreatorFromDB } = require('./formatters/poll');
 const { userHasAlreadyVoted, optionDoesExists, newPollHasDuplicatedOptions } = require('./utils/helpers');
 
 module.exports = () => {
@@ -58,6 +58,19 @@ module.exports = () => {
 		};
 
 
+		const creator = async id => {
+			try {
+				const pollFromDB = await Poll.findOne({ _id: id });
+				if (!pollFromDB) throw new Error('poll_not_found');
+				const pollFormatted = formatPollCreatorFromDB(pollFromDB);
+				return pollFormatted;
+			} catch (err) {
+				logger.error(err);
+				throw err;
+			}
+		};
+
+
 		const close = async id => {
 			try {
 				const pollFromDB = await Poll.findOne({ _id: id });
@@ -94,6 +107,7 @@ module.exports = () => {
 			details,
 			close,
 			deleteById,
+			creator,
 		};
 	};
 

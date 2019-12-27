@@ -23,6 +23,8 @@ const formatPollCreateFromDB = pollFromDB => ({
 	id: pollFromDB._id,
 });
 
+const formatPollCreatorFromDB = pollFromDB => formatUserFromDB(pollFromDB.createdBy);
+
 const formatPollsListFromDB = (pollsListFromDB, user) => ({
 	polls: pollsListFromDB.map(pollFromDB => ({
 		id: pollFromDB._id,
@@ -38,8 +40,7 @@ const formatPollsListFromDB = (pollsListFromDB, user) => ({
 });
 
 const formatPollDetailsFromDB = (pollFromDB, user) => {
-	switch (user.rol) {
-	case 'Admin':
+	if (user.email === pollFromDB.createdBy.email || user.rol === 'Admin') {
 		return {
 			id: pollFromDB._id,
 			timestampCreation: pollFromDB.timestampCreation,
@@ -55,20 +56,20 @@ const formatPollDetailsFromDB = (pollFromDB, user) => {
 			votedOption: getVotedOption(user, pollFromDB),
 			createdBy: formatUserFromDB(pollFromDB.createdBy),
 		};
-	case 'User':
+	} else if (user.rol === 'User') {
 		return {
 			id: pollFromDB._id,
 			timestampCreation: pollFromDB.timestampCreation,
 			name: pollFromDB.name,
 			description: pollFromDB.description,
+			category: pollFromDB.category,
 			active: pollFromDB.active,
 			options: pollFromDB.options.map(op => ({ votesCount: op.votes.length, name: op.name })),
 			votedOption: getVotedOption(user, pollFromDB),
 			createdBy: formatUserFromDB(pollFromDB.createdBy),
 		};
-	default:
-		return {};
 	}
+	return {};
 };
 
 
@@ -77,4 +78,5 @@ module.exports = {
 	formatPollCreateFromDB,
 	formatPollsListFromDB,
 	formatPollDetailsFromDB,
+	formatPollCreatorFromDB,
 };

@@ -8,7 +8,7 @@ const buildForbiddenError = httpErrorFactory(FORBIDDEN);
 
 
 module.exports = () => {
-	const start = async ({ config }) => {
+	const start = async ({ config, store }) => {
 		const requests = {
 			get: uri => ({
 				uri,
@@ -36,9 +36,16 @@ module.exports = () => {
 		};
 
 
-		const authorise = attribute => allowedList => async (req, res, next) => {
+		const authorise = operation => attribute => allowedList => async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
+				if (['close', 'delete'].includes(operation)) {
+					const { id } = req.params;
+					const creator = await store.creator(id);
+					if (userFromGoogleToken.email === creator.email) {
+						userFromGoogleToken.rol = 'Creator';
+					}
+				}
 				if (!allowedList.includes(userFromGoogleToken[attribute])) throw new Error(`${attribute} not valid`);
 				return next();
 			} catch (error) {

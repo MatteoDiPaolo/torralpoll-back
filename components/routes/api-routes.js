@@ -56,7 +56,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.post('/create', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
+		app.post('/create', cors(), auth.authenticate, auth.authorise('create')('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
@@ -80,7 +80,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.get('/list', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
+		app.get('/list', cors(), auth.authenticate, auth.authorise('list')('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
@@ -105,7 +105,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.post('/:id/vote', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
+		app.post('/:id/vote', cors(), auth.authenticate, auth.authorise('vote')('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
@@ -132,7 +132,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.get('/:id/details', cors(), auth.authenticate, auth.authorise('rol')(['User', 'Admin']), async (req, res, next) => {
+		app.get('/:id/details', cors(), auth.authenticate, auth.authorise('details')('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
@@ -157,7 +157,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.post('/:id/close', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
+		app.post('/:id/close', cors(), auth.authenticate, auth.authorise('close')('rol')(['Admin', 'Creator']), async (req, res, next) => {
 			try {
 				const { id } = req.params;
 				const pollId = await controller.poll.close(id);
@@ -180,7 +180,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.delete('/:id/delete', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
+		app.delete('/:id/delete', cors(), auth.authenticate, auth.authorise('delete')('rol')(['Admin', 'Creator']), async (req, res, next) => {
 			try {
 				const { id } = req.params;
 				const pollDeleted = await controller.poll.deleteById(id);
@@ -200,7 +200,7 @@ module.exports = () => {
 		 * @returns {ErrorServer.model} 500 - Server Error
 		 * @security JWT
 		 */
-		app.get('/categories', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
+		app.get('/categories', cors(), auth.authenticate, auth.authorise('categories')('rol')(['User', 'Admin']), async (req, res, next) => {
 			try {
 				const categories = await controller.category.listAll();
 				return res.json(categories);

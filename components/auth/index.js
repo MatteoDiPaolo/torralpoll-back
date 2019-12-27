@@ -3,4 +3,7 @@ const initAuth = require('./auth');
 
 module.exports = new System({ name: 'auth' })
 	.add('auth', initAuth())
-	.dependsOn('config');
+	.dependsOn('config', {
+		component: 'store.poll',
+		destination: 'store',
+	});

@@ -30,6 +30,7 @@
  * @typedef PollCreateRequest
  * @property {string} name
  * @property {string} description
+ * @property {string} category
  * @property {Array.<string>} options
  */
 
@@ -44,6 +45,7 @@
  * @property {string} timestampCreation
  * @property {string} name
  * @property {string} description
+ * @property {string} category
  * @property {boolean} active
  * @property {boolean} userHasVoted
  * @property {User.model} createdBy
@@ -83,6 +85,7 @@
  * @property {string} timestampCreation
  * @property {string} name
  * @property {string} description
+ * @property {string} category
  * @property {boolean} active
  * @property {Array.<PollUserResponseOption>} options
  * @property {string} votedOption
@@ -95,6 +98,7 @@
  * @property {string} timestampCreation
  * @property {string} name
  * @property {string} description
+ * @property {string} category
  * @property {boolean} active
  * @property {Array.<PollAdminResponseOption>} options
  * @property {string} votedOption
