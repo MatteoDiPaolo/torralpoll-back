@@ -60,7 +60,7 @@ module.exports = () => {
 			try {
 				const { userFromGoogleToken } = res.locals;
 				const user = formatUserToOnlyUsefulProps(userFromGoogleToken);
-				const { name, description, options, category = '' } = req.body;
+				const { name, description, options, category } = req.body;
 				const timestampCreation = new Date();
 				const pollId = await controller.poll.create(timestampCreation, name, description, options, category, user);
 				return res.json(pollId);
