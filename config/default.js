@@ -47,6 +47,9 @@ module.exports = {
 		category: {
 			list: POLL_CATEGORIES,
 		},
+		poll: {
+			categories: POLL_CATEGORIES,
+		},
 	},
 	auth: {
 		googleClientId: process.env.GOOGLE_CLIENT_ID,

@@ -4,7 +4,7 @@ const initCategory = require('./category');
 
 module.exports = new System({ name: 'controller' })
 	.add('controller.poll', initPoll())
-	.dependsOn('logger', {
+	.dependsOn('logger', 'config', {
 		component: 'store.poll',
 		destination: 'store',
 	})

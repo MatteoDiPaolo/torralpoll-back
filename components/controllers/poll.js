@@ -4,8 +4,9 @@ const notFoundError = errorFactory('not_found');
 const serverError = errorFactory();
 
 module.exports = () => {
-	const start = async ({ store }) => {
+	const start = async ({ store, config }) => {
 		const create = async (timestampCreation, name, description, options, category, user) => {
+			if (!config.categories.includes(category)) throw serverError(`Category: ${category} is not supported`);
 			try {
 				const pollId = await store.create(timestampCreation, name, description, options, category, user);
 				return pollId;
