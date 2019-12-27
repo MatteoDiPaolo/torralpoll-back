@@ -9,7 +9,4 @@ module.exports = new System({ name: 'controller' })
 		destination: 'store',
 	})
 	.add('controller.category', initCategory())
-	.dependsOn('logger', {
-		component: 'store.category',
-		destination: 'store',
-	});
+	.dependsOn('logger', 'config');

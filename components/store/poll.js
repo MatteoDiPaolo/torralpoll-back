@@ -1,5 +1,5 @@
 const Poll = require('./models/poll');
-const { formatNewPollToDB, formatPollToDB, formatPollCreateFromDB, formatPollsListFromDB, formatPollDetailsFromDB } = require('./formatters/poll');
+const { formatNewPollToDB, formatPollCreateFromDB, formatPollsListFromDB, formatPollDetailsFromDB } = require('./formatters/poll');
 const { userHasAlreadyVoted, optionDoesExists, newPollHasDuplicatedOptions } = require('./utils/helpers');
 
 module.exports = () => {
@@ -87,19 +87,6 @@ module.exports = () => {
 			}
 		};
 
-		const updateById = async (id, timestampModified, name, description, options, category) => {
-			try {
-				if (newPollHasDuplicatedOptions(options)) throw new Error('poll_with_duplicated_options');
-				const modifiedPoll = formatPollToDB(timestampModified, name, description, options, category);
-				const pollFromDB = await Poll.findByIdAndUpdate({ _id: id }, { $set: modifiedPoll }, { upsert: true });
-				if (!pollFromDB) throw new Error('poll_not_found');
-				return { id };
-			} catch (err) {
-				logger.error(err);
-				throw err;
-			}
-		};
-
 		return {
 			listAll,
 			create,
@@ -107,7 +94,6 @@ module.exports = () => {
 			details,
 			close,
 			deleteById,
-			updateById,
 		};
 	};
 

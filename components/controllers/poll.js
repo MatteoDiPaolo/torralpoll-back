@@ -72,16 +72,6 @@ module.exports = () => {
 			}
 		};
 
-		const updateById = async (id, timestampCreation, name, description, options, category) => {
-			try {
-				const pollId = await store.updateById(id, timestampCreation, name, description, options, category);
-				return pollId;
-			} catch (err) {
-				if (err.message === 'poll_with_duplicated_options') throw serverError('New poll has duplicated options');
-				throw serverError('Error updating a new poll');
-			}
-		};
-
 		return {
 			create,
 			listAll,
@@ -89,7 +79,6 @@ module.exports = () => {
 			vote,
 			close,
 			deleteById,
-			updateById,
 		};
 	};
 

@@ -19,18 +19,6 @@ const formatNewPollToDB = (timestampCreation, name, description, options, catego
 	options: options.map(option => ({ name: option, votes: [] })),
 });
 
-const formatPollToDB = (timestampModified, name, description, options, category) => ({
-	timestampModified,
-	name,
-	description,
-	category,
-	options,
-});
-
-const formatNewCategoryToDB = name => ({
-	name,
-});
-
 const formatPollCreateFromDB = pollFromDB => ({
 	id: pollFromDB._id,
 });
@@ -86,8 +74,6 @@ const formatPollDetailsFromDB = (pollFromDB, user) => {
 
 module.exports = {
 	formatNewPollToDB,
-	formatPollToDB,
-	formatNewCategoryToDB,
 	formatPollCreateFromDB,
 	formatPollsListFromDB,
 	formatPollDetailsFromDB,

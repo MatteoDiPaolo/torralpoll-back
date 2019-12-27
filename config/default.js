@@ -27,6 +27,14 @@ const USERS_EMAILS = [
 	'david.diez@guidesmiths.com',
 ];
 
+const POLL_CATEGORIES = [
+	'restaurant',
+	'afterwork',
+	'knowledge sharing',
+	'business decision',
+	'other',
+];
+
 
 module.exports = {
 	server: {
@@ -35,6 +43,11 @@ module.exports = {
 	},
 	store: {
 		mongodbConnectionString: process.env.MONGODB_CONNECTION_STRING,
+	},
+	controller: {
+		category: {
+			list: POLL_CATEGORIES,
+		},
 	},
 	auth: {
 		googleClientId: process.env.GOOGLE_CLIENT_ID,

@@ -1,16 +1,8 @@
 module.exports = () => {
-	const start = async ({ store }) => {
-		const create = async name => {
-			const category = await store.create(name);
-			return category;
-		};
+	const start = async ({ config }) => {
+		const listAll = () => config.list;
 
-		const listAll = async () => {
-			const categories = await store.listAll();
-			return categories;
-		};
 		return {
-			create,
 			listAll,
 		};
 	};

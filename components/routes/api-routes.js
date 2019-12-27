@@ -190,28 +190,17 @@ module.exports = () => {
 			}
 		});
 
-		app.put('/:id/update', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
-			try {
-				const { id, name, description, options, category = '' } = req.body;
-				const timestampModified = new Date();
-				const pollId = await controller.poll.updateById(id, timestampModified, name, description, options, category);
-				return res.json(pollId);
-			} catch (err) {
-				return next(tagError(err));
-			}
-		});
-
-		app.post('/createCategory', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
-			try {
-				const { name } = req.body;
-				const category = await controller.category.create(name);
-				return res.json(category);
-			} catch (err) {
-				return next(tagError(err));
-			}
-		});
-
-		app.get('/categoryList', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
+		/**
+		 * This endpoint will give you a list of each category that can be applied to a poll
+		 * @route GET /categories
+		 * @group Categories - Everything about categories
+		 * @returns {Array.<string>} 200 - Success response
+		 * @returns {Error401.model} 401 - Unauthorized
+		 * @returns {Error403.model} 403 - Forbidden
+		 * @returns {ErrorServer.model} 500 - Server Error
+		 * @security JWT
+		 */
+		app.get('/categories', cors(), auth.authenticate, auth.authorise('rol')(['Admin']), async (req, res, next) => {
 			try {
 				const categories = await controller.category.listAll();
 				return res.json(categories);
