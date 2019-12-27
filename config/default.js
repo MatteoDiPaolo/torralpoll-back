@@ -7,7 +7,7 @@ const USERS_EMAILS = [
 	'matteo.del.passo89@gmail.com', 'lucas1004jx@gmail.com',
 	'daniel.alarcon@guidesmiths.com', 'pablo.albaladejo@guidesmiths.com',
 	'daniel.colas@guidesmiths.com', 'javier.arriero@guidesmiths.com',
-	'ismael.bakkali@guidesmiths.com', 'maria.batet@guidesmiths.com',
+	'ismael.bakkali@guidesmiths.com', 'david.diez@guidesmiths.com',
 	'michael.beattie@guidesmiths.com', 'javier.bergantinos@guidesmiths.com',
 	'guillermo.c.martinez@guidesmiths.com', 'joseantonio.dorado@guidesmiths.com',
 	'nuria.extremadouro@guidesmiths.com', 'alberto.fernandez@guidesmiths.com',
@@ -18,13 +18,11 @@ const USERS_EMAILS = [
 	'javier.manzano@guidesmiths.com', 'inigo.marquinez@guidesmiths.com',
 	'kevin.martinez@guidesmiths.com', 'iria.mavji@guidesmiths.com',
 	'mike.morley@guidesmiths.com', 'mike.newall@guidesmiths.com',
-	'glenn.ogrady@guidesmiths.com', 'antonio.panfalone@guidesmiths.com',
+	'glenn.ogrady@guidesmiths.com', 'jm.torralvo@guidesmiths.com',
 	'diego.perez@guidesmiths.com', 'victor.perez@guidesmiths.com',
 	'felipe.polo@guidesmiths.com', 'mario.quiroga@guidesmiths.com',
 	'ruben.romero@guidesmiths.com', 'carlos.serrano@guidesmiths.com',
-	'josep.servat@guidesmiths.com', 'jm.torralvo@guidesmiths.com',
 	'ulises.gascon@guidesmiths.com', 'laura.corbi@guidesmiths.com',
-	'david.diez@guidesmiths.com',
 ];
 
 const POLL_CATEGORIES = [
