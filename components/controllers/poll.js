@@ -1,12 +1,16 @@
 const { errorFactory } = require('../../lib/errors');
 
 const notFoundError = errorFactory('not_found');
+const wrongInputError = errorFactory('wrong_input');
 const serverError = errorFactory();
 
 module.exports = () => {
 	const start = async ({ store, config }) => {
 		const create = async (timestampCreation, name, description, options, category, user) => {
-			if (!config.categories.includes(category)) throw serverError(`Category: ${category} is not supported`);
+			if (!name || typeof name !== 'string') throw wrongInputError(`Name: ${name} is not a valid input`);
+			if (!description || typeof description !== 'string') throw wrongInputError(`Description: ${description} is not a valid input`);
+			if (!Array.isArray(options) || options.length < 2) throw wrongInputError(`Options: ${options} is not a valid input`);
+			if (!config.categories.includes(category)) throw wrongInputError(`Category: ${category} is not supported`);
 			try {
 				const pollId = await store.create(timestampCreation, name, description, options, category, user);
 				return pollId;
@@ -27,6 +31,8 @@ module.exports = () => {
 
 
 		const vote = async (id, option, user) => {
+			if (!id || typeof id !== 'string' || id.match('^[a-f\\d]{24}$')) throw wrongInputError(`Id: ${id} is not a valid input`);
+			if (!option || typeof option !== 'string') throw wrongInputError(`Option: ${option} is not a valid input`);
 			try {
 				const pollId = await store.updateVotes(id, option, user);
 				return pollId;
@@ -41,6 +47,7 @@ module.exports = () => {
 
 
 		const details = async (id, user) => {
+			if (!id || typeof id !== 'string' || id.match('^[a-f\\d]{24}$')) throw wrongInputError(`Id: ${id} is not a valid input`);
 			try {
 				const poll = await store.details(id, user);
 				return poll;
@@ -52,6 +59,7 @@ module.exports = () => {
 
 
 		const close = async id => {
+			if (!id || typeof id !== 'string' || id.match('^[a-f\\d]{24}$')) throw wrongInputError(`Id: ${id} is not a valid input`);
 			try {
 				const pollId = await store.close(id);
 				return pollId;
@@ -64,6 +72,7 @@ module.exports = () => {
 
 
 		const deleteById = async id => {
+			if (!id || typeof id !== 'string' || id.match('^[a-f\\d]{24}$')) throw wrongInputError(`Id: ${id} is not a valid input`);
 			try {
 				const poll = await store.deleteById(id);
 				return poll;
