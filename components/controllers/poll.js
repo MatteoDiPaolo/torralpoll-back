@@ -33,7 +33,7 @@ module.exports = () => {
 
 
 		const vote = async (id, option, user) => {
-			if (!id || typeof id !== 'string' || idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
+			if (!id || typeof id !== 'string' || !idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
 			if (!option || typeof option !== 'string') throw wrongInputError(`Option: ${option} is not a valid input`);
 			try {
 				const pollId = await store.updateVotes(id, option, user);
@@ -49,7 +49,7 @@ module.exports = () => {
 
 
 		const details = async (id, user) => {
-			if (!id || typeof id !== 'string' || idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
+			if (!id || typeof id !== 'string' || !idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
 			try {
 				const poll = await store.details(id, user);
 				return poll;
@@ -61,7 +61,7 @@ module.exports = () => {
 
 
 		const close = async id => {
-			if (!id || typeof id !== 'string' || idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
+			if (!id || typeof id !== 'string' || !idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
 			try {
 				const pollId = await store.close(id);
 				return pollId;
@@ -74,7 +74,7 @@ module.exports = () => {
 
 
 		const deleteById = async id => {
-			if (!id || typeof id !== 'string' || idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
+			if (!id || typeof id !== 'string' || !idFormat.test(id)) throw wrongInputError(`Id: ${id} is not a valid input`);
 			try {
 				const poll = await store.deleteById(id);
 				return poll;
