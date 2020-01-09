@@ -23,7 +23,8 @@ const USERS_EMAILS = [
 	'felipe.polo@guidesmiths.com', 'mario.quiroga@guidesmiths.com',
 	'ruben.romero@guidesmiths.com', 'carlos.serrano@guidesmiths.com',
 	'ulises.gascon@guidesmiths.com', 'laura.corbi@guidesmiths.com',
-	'lucas1004jx@gmail.com',
+	'lucas1004jx@gmail.com', 'rafael.delatorre@guidesmiths.com',
+	'amelia.perales@guidesmiths.com',
 ];
 
 const POLL_CATEGORIES = [
