@@ -25,6 +25,7 @@ const USERS_EMAILS = [
 	'ulises.gascon@guidesmiths.com', 'laura.corbi@guidesmiths.com',
 	'lucas1004jx@gmail.com', 'rafael.delatorre@guidesmiths.com',
 	'amelia.perales@guidesmiths.com', 'deicola.moreno@guidesmiths.com',
+	'roberto.hernandez@guidesmiths.com', 'david.yusta@guidesmiths.com',
 ];
 
 const POLL_CATEGORIES = [
