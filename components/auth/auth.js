@@ -27,8 +27,8 @@ module.exports = () => {
 				const token = req.headers.authorization;
 				if (!token) throw new Error('Missing token');
 				const payloadFromGoogle = await isTokenValidForGoogle(token);
-				if (payloadFromGoogle.aud !== config.googleClientId) throw new Error('Invalid token');
-				res.locals.userFromGoogleToken = formatUserFromGoogleToken(payloadFromGoogle, config);
+        if (!new RegExp(`^(${config.googleClientId}|${config.googleClientIdMA})$`).test(payloadFromGoogle.aud)) throw new Error('Invalid token');
+        res.locals.userFromGoogleToken = formatUserFromGoogleToken(payloadFromGoogle, config);
 				return next();
 			} catch (error) {
 				return next(buildUnauthorisedError(`Authentication failed: ${error.message}`));
