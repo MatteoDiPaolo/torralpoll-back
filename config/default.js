@@ -56,8 +56,7 @@ module.exports = {
 		},
 	},
 	auth: {
-    googleClientId: process.env.GOOGLE_CLIENT_ID,
-    googleClientIdMA: process.env.GOOGLE_CLIENT_ID_MA,
+    googleClientIds: [ process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_ID_MA],
 		adminsEmails: ADMINS_EMAILS,
 		usersEmails: USERS_EMAILS,
 		adminRol: 'Admin',

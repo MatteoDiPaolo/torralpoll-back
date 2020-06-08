@@ -27,7 +27,7 @@ module.exports = () => {
 				const token = req.headers.authorization;
 				if (!token) throw new Error('Missing token');
 				const payloadFromGoogle = await isTokenValidForGoogle(token);
-        if (!new RegExp(`^(${config.googleClientId}|${config.googleClientIdMA})$`).test(payloadFromGoogle.aud)) throw new Error('Invalid token');
+        if (!config.googleClientIds.includes(payloadFromGoogle.aud)) throw new Error('Invalid token');
         res.locals.userFromGoogleToken = formatUserFromGoogleToken(payloadFromGoogle, config);
 				return next();
 			} catch (error) {
