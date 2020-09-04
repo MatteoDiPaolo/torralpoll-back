@@ -28,6 +28,8 @@ const USERS_EMAILS = [
 	'roberto.hernandez@guidesmiths.com', 'david.yusta@guidesmiths.com',
 	'alejandra.castro@guidesmiths.com', 'gabriel.pfeffer@guidesmiths.com',
 	'ramon.morcillo@guidesmiths.com', 'farivar.parand@guidesmiths.com',
+	'alejandro.sanchez@guidesmiths.com', 'ignacio.ripoli@guidesmiths.com',
+	'jennifer.goijman@guidesmiths.com', 'daniel.eguiluz@guidesmiths.com',
 ];
 
 const POLL_CATEGORIES = [
@@ -56,7 +58,7 @@ module.exports = {
 		},
 	},
 	auth: {
-    googleClientIds: [ process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_ID_MA],
+		googleClientIds: [process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_ID_MA],
 		adminsEmails: ADMINS_EMAILS,
 		usersEmails: USERS_EMAILS,
 		adminRol: 'Admin',
