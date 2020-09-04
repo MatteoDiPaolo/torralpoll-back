@@ -30,6 +30,11 @@ const USERS_EMAILS = [
 	'ramon.morcillo@guidesmiths.com', 'farivar.parand@guidesmiths.com',
 	'alejandro.sanchez@guidesmiths.com', 'ignacio.ripoli@guidesmiths.com',
 	'jennifer.goijman@guidesmiths.com', 'daniel.eguiluz@guidesmiths.com',
+	'jorge.baumann@guidesmiths.com', 'sergio.camara@guidesmiths.com',
+	'clara.dios@guidesmiths.com', 'dailos.rafael@guidesmiths.com',
+	'daniel.eguiluz@guidesmiths.com', 'arturo.gomez@guidesmiths.com',
+	'javier.gonzalez@guidesmiths.com', 'elizabeth.morillo@guidesmiths.com',
+	'raquel.rodriguez@guidesmiths.com',
 ];
 
 const POLL_CATEGORIES = [
