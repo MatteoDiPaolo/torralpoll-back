@@ -35,6 +35,7 @@ const USERS_EMAILS = [
 	'daniel.eguiluz@guidesmiths.com', 'arturo.gomez@guidesmiths.com',
 	'javier.gonzalez@guidesmiths.com', 'elizabeth.morillo@guidesmiths.com',
 	'raquel.rodriguez@guidesmiths.com', 'ashleigh.dorrian@guidesmiths.com',
+	'riina.korpela@guidesmiths.com',
 ];
 
 const POLL_CATEGORIES = [
