@@ -26,7 +26,6 @@ const USERS_EMAILS = [
 	'lucas1004jx@gmail.com', 'rafael.delatorre@guidesmiths.com',
 	'amelia.perales@guidesmiths.com', 'deicola.moreno@guidesmiths.com',
 	'roberto.hernandez@guidesmiths.com', 'david.yusta@guidesmiths.com',
-	'alejandra.castro@guidesmiths.com', 'gabriel.pfeffer@guidesmiths.com',
 	'ramon.morcillo@guidesmiths.com', 'farivar.parand@guidesmiths.com',
 	'alejandro.sanchez@guidesmiths.com', 'ignacio.ripoli@guidesmiths.com',
 	'jennifer.goijman@guidesmiths.com', 'daniel.eguiluz@guidesmiths.com',
@@ -35,7 +34,12 @@ const USERS_EMAILS = [
 	'daniel.eguiluz@guidesmiths.com', 'arturo.gomez@guidesmiths.com',
 	'javier.gonzalez@guidesmiths.com', 'elizabeth.morillo@guidesmiths.com',
 	'raquel.rodriguez@guidesmiths.com', 'ashleigh.dorrian@guidesmiths.com',
-	'riina.korpela@guidesmiths.com',
+	'riina.korpela@guidesmiths.com', 'hamsa.aldrobi@guidesmiths.com',
+	'ivan.esteban@guidesmiths.com', 'frank.lacroix@guidesmiths.com',
+	'jose.giner@guidesmiths.com', 'virginia.gomez@guidesmiths.com',
+	'raquel.rodriguez@guidesmiths.com', 'gabriel.pfeffer@guidesmiths.com',
+	'alex.serra@guidesmiths.com', 'cristina.torrejon@guidesmiths.com',
+	'francisco.valdesoiro@guidesmiths.com',
 ];
 
 const POLL_CATEGORIES = [
